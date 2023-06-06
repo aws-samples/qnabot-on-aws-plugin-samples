@@ -32,12 +32,12 @@ _qna-ExtraSpecial_
 
 ![Here is an example](./images/settings.png)
 
-## Make a call to Foudation API call (j2-jumbo-instruct/complete)
+## Make Foudation Model API call
 Follow the steps below to try the AI21 Foudation Model API in this QnA bot. This function call __j2-jumbo-instruct/complete__ by default.
 - Update the __LLM_QA_MODEL_PARAMS__  to `{"temperature":0,"maxTokens":12,"minTokens":0,"topP":1,"topKReturn":1,"model_type":"j2-jumbo-instruct"}`
 
 
-## Make a call to Task-Specific (Contextual Answers [BETA]) API call
+## Make Task-Specific (Contextual Answers [BETA]) API call
 Follow the steps below to try the Contextual Answers API in this QnA bot
 
 1. Backup your prompt text in __LLM_QA_PROMPT_TEMPLATE__
