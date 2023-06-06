@@ -1,0 +1,225 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: QnA Bot
+
+Metadata:
+  License:
+    Description: >
+      Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+      SPDX-License-Identifier: MIT-0
+
+      Permission is hereby granted, free of charge, to any person obtaining a copy of this
+      software and associated documentation files (the "Software"), to deal in the Software
+      without restriction, including without limitation the rights to use, copy, modify,
+      merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+      permit persons to whom the Software is furnished to do so.
+
+      THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+      INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+      PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+      HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+      OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+      SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+  AWS::CloudFormation::Interface: 
+    ParameterGroups:
+      -
+        Label:
+          default: Lambda Configuration
+        Parameters:
+          - lambaFunctionName
+          - functionIamRole
+      -
+         Label:
+          default: Runtime configuration     
+         Parameters:
+          - pythonRuntime
+          - cpuArchitecture         
+
+Parameters:
+  lambaFunctionName:
+    Type: String
+    Description: Name of Lambda function that starts with "qna-"(letters, numbers, hyphens, or underscores with no spaces up to 64 characters in length) 
+    ConstraintDescription: Enter a valid name
+    AllowedPattern: ".+"
+    Default: "qna-Lambda"
+
+  functionIamRole:
+    Type: String
+    Description: Name of IAM role to attach (Copy from Lambda Hook Instructions in Designer Page)
+    ConstraintDescription: Do specify IAM role name
+    AllowedPattern: ".+"
+
+  cpuArchitecture:
+    Type: String
+    AllowedValues:
+      - x86_64
+      - arm64
+    Description: Instruction set architecture
+    Default: arm64
+
+  pythonRuntime:
+    Type: String
+    AllowedPattern: "python3\\.\\d{1,2}"
+    Description: Python 3 runtime version ( https://docs.aws.amazon.com/lambda/latest/dg/lambda-python.html )
+    Default: python3.10
+
+Resources:
+  lambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Description: !Sub "[${AWS::StackName}]-QnA Bot Public Endpoint Labmda"
+      FunctionName: !Ref lambaFunctionName
+      Handler: "index.lambda_handler"
+      Role: !Sub "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${functionIamRole}"
+      MemorySize: 128
+      Timeout: 5
+      Architectures:
+      - !Ref cpuArchitecture
+      Runtime: !Ref pythonRuntime       
+      Code:
+        ZipFile: |
+          import json
+          import http.client
+          
+          url = "api.ai21.com"
+          
+          def get_jurrasic(prompt,model_params,apiKey):
+              
+              endpoint = "/studio/v1/j2-jumbo-instruct/complete"
+              headers = {
+                  "Authorization": "Bearer "+ apiKey,
+                  "Accept": "application/json",
+                  "Content-Type": "application/json"
+              }
+              data = {
+                  "numResults": 1,
+                  "maxTokens": model_params['maxTokens'],
+                  "minTokens": model_params['minTokens'],
+                  "temperature": model_params['temperature'],
+                  "topP": model_params['topP'],
+                  "topKReturn": model_params['topKReturn'],
+                  "frequencyPenalty": {
+                      "scale": 1,
+                      "applyToWhitespaces": True,
+                      "applyToPunctuations": True,
+                      "applyToNumbers": True,
+                      "applyToStopwords": True,
+                      "applyToEmojis": True
+                  },
+                  "presencePenalty": {
+                      "scale": 0,
+                      "applyToWhitespaces": True,
+                      "applyToPunctuations": True,
+                      "applyToNumbers": True,
+                      "applyToStopwords": True,
+                      "applyToEmojis": True
+                  },
+                  "countPenalty": {
+                      "scale": 0,
+                      "applyToWhitespaces": True,
+                      "applyToPunctuations": True,
+                      "applyToNumbers": True,
+                      "applyToStopwords": True,
+                      "applyToEmojis": True
+                  },
+                  "prompt": prompt
+              }
+          
+              # Create a connection
+              conn = http.client.HTTPSConnection(url)
+          
+              # Send the POST request
+              conn.request("POST", endpoint, json.dumps(data), headers)
+          
+              # Get the response
+              response = conn.getresponse()
+          
+              # Read the response data
+              response_data = response.read().decode()
+          
+              # Close the connection
+              conn.close()
+          
+              # Process the response or perform other actions
+              response_json = json.loads(response_data)
+              completions = response_json.get("completions", [])
+          
+              if completions:
+                  generated_text = completions[0].get("data", {}).get("text", "")
+              else:
+                  generated_text = ""
+              
+              return generated_text
+          
+          
+          def get_contextualAnswers(prompt,model_params,apiKey):
+              
+              context = prompt.split("context:")[1].split("||")[0].strip()
+              question = prompt.split("question:")[1].strip()
+          
+              
+              endpoint = "/studio/v1/experimental/answer"
+              headers = {
+                  "Authorization": "Bearer "+apiKey,
+                  "Accept": "application/json",
+                  "Content-Type": "application/json"
+              }
+              data = {
+                  "context": context,
+                  "question": question
+              }
+          
+              # Create a connection
+              conn = http.client.HTTPSConnection(url)
+          
+              # Send the POST request
+              conn.request("POST", endpoint, json.dumps(data), headers)
+          
+              # Get the response
+              response = conn.getresponse()
+          
+              # Read the response data
+              response_data = response.read().decode()
+          
+              # Close the connection
+              conn.close()
+          
+              # Process the response or perform other actions
+              response_json = json.loads(response_data)
+              generated_text = response_json.get("answer", "")
+          
+              
+              return generated_text
+          
+          
+          def lambda_handler(event, context):
+           
+              prompt = event["prompt"]
+              model_params = event["parameters"]
+              settings = event["settings"]
+              apiKey = settings['LLM_THIRD_PARTY_API_KEY']
+              
+              if 'contextualAnswers' in model_params and model_params['contextualAnswers'] == 'TRUE':
+                  generated_text = get_contextualAnswers(prompt,model_params,apiKey)
+              else:
+                  generated_text = get_jurrasic(prompt,model_params,apiKey)
+          
+              return {
+                  'generated_text': generated_text
+              }
+
+      Tags:
+        - Key: StackName
+          Value: !Sub ${AWS::StackName}
+        - Key: StackId
+          Value: !Sub ${AWS::StackId}
+
+
+Outputs:
+  lambdaFunctionConsole:
+    Description: Lambda console
+    Value: !Sub "https://${AWS::Region}.console.aws.amazon.com/lambda/home?region=${AWS::Region}#/functions/${lambdaFunction}?tab=code"
+
+  lambdaArn:
+    Description: ARN of Lambda Function
+    Value: !GetAtt lambdaFunction.Arn
