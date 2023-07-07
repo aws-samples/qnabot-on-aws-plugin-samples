@@ -63,7 +63,57 @@ Parameters:
     Description: Python 3 runtime version ( https://docs.aws.amazon.com/lambda/latest/dg/lambda-python.html )
     Default: python3.10
 
+  ai21ApiKeySecretName:
+    Type: String
+    Default: ai21-api-key
+
+  anthropicApiKeySecretName:
+    Type: String
+    Default: anthropic-api-key
+
 Resources:
+  secretAi21ApiKey:
+    Type: AWS::SecretsManager::Secret
+    Properties: 
+      Description: AI21 API Key
+      Name: !Ref ai21ApiKeySecretName
+      
+  secretAnthropicApiKey:
+    Type: AWS::SecretsManager::Secret
+    Properties: 
+      Description: AI21 API Key
+      Name: !Ref anthropicApiKeySecretName
+
+  CreateTestDBPolicy:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      Description: Policy allowing role to access secret in secrets manager
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'secretsmanager:GetResourcePolicy'
+              - 'secretsmanager:GetSecretValue'
+              - 'secretsmanager:DescribeSecret'
+              - 'secretsmanager:ListSecretVersionIds'
+            Resource:
+              - !Ref secretAi21ApiKey
+              - !Ref secretAnthropicApiKey
+      Roles:
+        - !Ref functionIamRole
+
+  # lambdaLayerLangchain:
+  #   Type: AWS::Lambda::LayerVersion
+  #   Properties: 
+  #     CompatibleRuntimes: 
+  #       - python3.10
+  #     Content: 
+  #       S3Bucket: anycompany-personalize-lab
+  #       S3Key: qnabot-blog/langchain.zip
+  #     Description: Langchain Lambda layer
+  #     LayerName: langchain-layer
+
   lambdaFunction:
     Type: AWS::Lambda::Function
     Properties:
@@ -76,137 +126,145 @@ Resources:
       Architectures:
       - !Ref cpuArchitecture
       Runtime: !Ref pythonRuntime       
+      # Layers:
+      #   - !Ref lambdaLayerLangchain
+      Environment:
+        Variables:
+          AI21_API_KEY_SECRET_NAME: !Ref ai21ApiKeySecretName
+          ANTHROPIC_API_KEY_SECRET_NAME: !Ref anthropicApiKeySecretName
       Code:
-        ZipFile: |
-          import json
-          import http.client
+        S3Bucket: anycompany-personalize-lab
+        S3Key: qnabot-blog/lambda_function.zip
+        # ZipFile: |
+        #   import json
+        #   import http.client
           
-          url = "api.ai21.com"
+        #   url = "api.ai21.com"
           
-          def get_jurrasic(prompt,model_params,apiKey):
+        #   def get_jurrasic(prompt,model_params,apiKey):
               
-              endpoint = "/studio/v1/j2-jumbo-instruct/complete"
-              headers = {
-                  "Authorization": "Bearer "+ apiKey,
-                  "Accept": "application/json",
-                  "Content-Type": "application/json"
-              }
-              data = {
-                  "numResults": 1,
-                  "maxTokens": model_params['maxTokens'],
-                  "minTokens": model_params['minTokens'],
-                  "temperature": model_params['temperature'],
-                  "topP": model_params['topP'],
-                  "topKReturn": model_params['topKReturn'],
-                  "frequencyPenalty": {
-                      "scale": 1,
-                      "applyToWhitespaces": True,
-                      "applyToPunctuations": True,
-                      "applyToNumbers": True,
-                      "applyToStopwords": True,
-                      "applyToEmojis": True
-                  },
-                  "presencePenalty": {
-                      "scale": 0,
-                      "applyToWhitespaces": True,
-                      "applyToPunctuations": True,
-                      "applyToNumbers": True,
-                      "applyToStopwords": True,
-                      "applyToEmojis": True
-                  },
-                  "countPenalty": {
-                      "scale": 0,
-                      "applyToWhitespaces": True,
-                      "applyToPunctuations": True,
-                      "applyToNumbers": True,
-                      "applyToStopwords": True,
-                      "applyToEmojis": True
-                  },
-                  "prompt": prompt
-              }
+        #       endpoint = "/studio/v1/j2-jumbo-instruct/complete"
+        #       headers = {
+        #           "Authorization": "Bearer "+ apiKey,
+        #           "Accept": "application/json",
+        #           "Content-Type": "application/json"
+        #       }
+        #       data = {
+        #           "numResults": 1,
+        #           "maxTokens": model_params['maxTokens'],
+        #           "minTokens": model_params['minTokens'],
+        #           "temperature": model_params['temperature'],
+        #           "topP": model_params['topP'],
+        #           "topKReturn": model_params['topKReturn'],
+        #           "frequencyPenalty": {
+        #               "scale": 1,
+        #               "applyToWhitespaces": True,
+        #               "applyToPunctuations": True,
+        #               "applyToNumbers": True,
+        #               "applyToStopwords": True,
+        #               "applyToEmojis": True
+        #           },
+        #           "presencePenalty": {
+        #               "scale": 0,
+        #               "applyToWhitespaces": True,
+        #               "applyToPunctuations": True,
+        #               "applyToNumbers": True,
+        #               "applyToStopwords": True,
+        #               "applyToEmojis": True
+        #           },
+        #           "countPenalty": {
+        #               "scale": 0,
+        #               "applyToWhitespaces": True,
+        #               "applyToPunctuations": True,
+        #               "applyToNumbers": True,
+        #               "applyToStopwords": True,
+        #               "applyToEmojis": True
+        #           },
+        #           "prompt": prompt
+        #       }
           
-              # Create a connection
-              conn = http.client.HTTPSConnection(url)
+        #       # Create a connection
+        #       conn = http.client.HTTPSConnection(url)
           
-              # Send the POST request
-              conn.request("POST", endpoint, json.dumps(data), headers)
+        #       # Send the POST request
+        #       conn.request("POST", endpoint, json.dumps(data), headers)
           
-              # Get the response
-              response = conn.getresponse()
+        #       # Get the response
+        #       response = conn.getresponse()
           
-              # Read the response data
-              response_data = response.read().decode()
+        #       # Read the response data
+        #       response_data = response.read().decode()
           
-              # Close the connection
-              conn.close()
+        #       # Close the connection
+        #       conn.close()
           
-              # Process the response or perform other actions
-              response_json = json.loads(response_data)
-              completions = response_json.get("completions", [])
+        #       # Process the response or perform other actions
+        #       response_json = json.loads(response_data)
+        #       completions = response_json.get("completions", [])
           
-              if completions:
-                  generated_text = completions[0].get("data", {}).get("text", "")
-              else:
-                  generated_text = ""
+        #       if completions:
+        #           generated_text = completions[0].get("data", {}).get("text", "")
+        #       else:
+        #           generated_text = ""
               
-              return generated_text
+        #       return generated_text
           
           
-          def get_contextualAnswers(prompt,model_params,apiKey):
+        #   def get_contextualAnswers(prompt,model_params,apiKey):
               
-              context = prompt.split("context:")[1].split("||")[0].strip()
-              question = prompt.split("question:")[1].strip()
-          
-              
-              endpoint = "/studio/v1/experimental/answer"
-              headers = {
-                  "Authorization": "Bearer "+apiKey,
-                  "Accept": "application/json",
-                  "Content-Type": "application/json"
-              }
-              data = {
-                  "context": context,
-                  "question": question
-              }
-          
-              # Create a connection
-              conn = http.client.HTTPSConnection(url)
-          
-              # Send the POST request
-              conn.request("POST", endpoint, json.dumps(data), headers)
-          
-              # Get the response
-              response = conn.getresponse()
-          
-              # Read the response data
-              response_data = response.read().decode()
-          
-              # Close the connection
-              conn.close()
-          
-              # Process the response or perform other actions
-              response_json = json.loads(response_data)
-              generated_text = response_json.get("answer", "")
+        #       context = prompt.split("context:")[1].split("||")[0].strip()
+        #       question = prompt.split("question:")[1].strip()
           
               
-              return generated_text
+        #       endpoint = "/studio/v1/experimental/answer"
+        #       headers = {
+        #           "Authorization": "Bearer "+apiKey,
+        #           "Accept": "application/json",
+        #           "Content-Type": "application/json"
+        #       }
+        #       data = {
+        #           "context": context,
+        #           "question": question
+        #       }
+          
+        #       # Create a connection
+        #       conn = http.client.HTTPSConnection(url)
+          
+        #       # Send the POST request
+        #       conn.request("POST", endpoint, json.dumps(data), headers)
+          
+        #       # Get the response
+        #       response = conn.getresponse()
+          
+        #       # Read the response data
+        #       response_data = response.read().decode()
+          
+        #       # Close the connection
+        #       conn.close()
+          
+        #       # Process the response or perform other actions
+        #       response_json = json.loads(response_data)
+        #       generated_text = response_json.get("answer", "")
+          
+              
+        #       return generated_text
           
           
-          def lambda_handler(event, context):
+        #   def lambda_handler(event, context):
            
-              prompt = event["prompt"]
-              model_params = event["parameters"]
-              settings = event["settings"]
-              apiKey = settings['LLM_THIRD_PARTY_API_KEY']
+        #       prompt = event["prompt"]
+        #       model_params = event["parameters"]
+        #       settings = event["settings"]
+        #       apiKey = settings['LLM_THIRD_PARTY_API_KEY']
               
-              if 'contextualAnswers' in model_params and model_params['contextualAnswers'] == 'TRUE':
-                  generated_text = get_contextualAnswers(prompt,model_params,apiKey)
-              else:
-                  generated_text = get_jurrasic(prompt,model_params,apiKey)
+        #       if 'contextualAnswers' in model_params and model_params['contextualAnswers'] == 'TRUE':
+        #           generated_text = get_contextualAnswers(prompt,model_params,apiKey)
+        #       else:
+        #           generated_text = get_jurrasic(prompt,model_params,apiKey)
           
-              return {
-                  'generated_text': generated_text
-              }
+        #       return {
+        #           'generated_text': generated_text
+        #       }
 
       Tags:
         - Key: StackName
