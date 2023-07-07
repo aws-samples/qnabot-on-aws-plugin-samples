@@ -1,6 +1,6 @@
 
 
-ZIP_FILE_NAME=lambda_function1.zip
+ZIP_FILE_NAME=lambda_function.zip
 INDEX_FILE_NAME=index.py
 APP_DIR=app
 S3_BUCKET=anycompany-personalize-lab
