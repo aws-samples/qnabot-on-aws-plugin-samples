@@ -35,7 +35,7 @@ def get_llm(llm_model, params):
             minTokens=params['minTokens'],
             temperature=params['temperature'],
             topP=params['topP'],
-            topKReturn=params['topKReturn'],
+            # topKReturn=params['topKReturn'],
             frequencyPenalty=AI21PenaltyData(
                 scale=1,
                 applyToWhitespaces=True,
