@@ -1,2 +1,4 @@
-lambda/deps
 .DS_Store
+*/python/
+*/*/python/
+build/
