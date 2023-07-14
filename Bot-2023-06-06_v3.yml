@@ -1,0 +1,221 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: QnA Bot
+
+Metadata:
+  License:
+    Description: >
+      Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+      SPDX-License-Identifier: MIT-0
+
+      Permission is hereby granted, free of charge, to any person obtaining a copy of this
+      software and associated documentation files (the "Software"), to deal in the Software
+      without restriction, including without limitation the rights to use, copy, modify,
+      merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+      permit persons to whom the Software is furnished to do so.
+
+      THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+      INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+      PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+      HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+      OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+      SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+  AWS::CloudFormation::Interface: 
+    ParameterGroups:
+      -
+        Label:
+          default: Lambda Configuration
+        Parameters:
+          - lambaFunctionName
+          - functionIamRole
+      -
+         Label:
+          default: Runtime configuration     
+         Parameters:
+          - pythonRuntime
+          - cpuArchitecture         
+
+Parameters:
+  functionIamRole:
+    Type: String
+    Description: Name of IAM role to attach (Copy from Lambda Hook Instructions in Designer Page)
+    ConstraintDescription: Do specify IAM role name
+    AllowedPattern: ".+"
+
+  cpuArchitecture:
+    Type: String
+    AllowedValues:
+      - x86_64
+      - arm64
+    Description: Instruction set architecture
+    Default: x86_64
+
+  pythonRuntime:
+    Type: String
+    AllowedPattern: "python3\\.\\d{1,2}"
+    Description: Python 3 runtime version ( https://docs.aws.amazon.com/lambda/latest/dg/lambda-python.html )
+    Default: python3.10
+
+  deployAI21LambdaFlag:
+    Type: String
+    Description: Whether to deploy AI21 plugin Lambda function
+    AllowedValues:
+      - true
+      - false
+    Default: true
+
+  deployAnthropicLambdaFlag:
+    Type: String
+    Description: Whether to deploy Anthropic plugin Lambda function
+    AllowedValues:
+      - true
+      - false
+    Default: true
+
+  ai21ApiKeySecretName:
+    Type: String
+    Default: ai21-api-key
+
+  anthropicApiKeySecretName:
+    Type: String
+    Default: anthropic-api-key
+
+  deploymentS3BucketName:
+    Type: String
+    Description: Name of the bucket where artifacts are deployed to
+
+  deploymentS3BucketPrefix:
+    Type: String
+    Description: Prefix of the S3 bucket where artifacts are deployed to
+
+Conditions:
+  DeployAI21Lambda: !Equals
+    - !Ref deployAI21LambdaFlag
+    - true
+
+  DeployAnthropicLambda: !Equals
+    - !Ref deployAnthropicLambdaFlag
+    - true
+
+Resources:
+  secretAi21ApiKey:
+    Type: AWS::SecretsManager::Secret
+    Condition: DeployAI21Lambda
+    Properties: 
+      Description: AI21 API Key
+      Name: !Ref ai21ApiKeySecretName
+      
+  secretAnthropicApiKey:
+    Type: AWS::SecretsManager::Secret
+    Condition: DeployAnthropicLambda
+    Properties: 
+      Description: Anthropic API Key
+      Name: !Ref anthropicApiKeySecretName
+
+  iamPolicyLambdaAllowSecretsManagerPolicy:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      Description: Policy allowing role to access secret in secrets manager
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'secretsmanager:GetResourcePolicy'
+              - 'secretsmanager:GetSecretValue'
+              - 'secretsmanager:DescribeSecret'
+              - 'secretsmanager:ListSecretVersionIds'
+            Resource:
+              - !If [ DeployAI21Lambda, !Ref secretAi21ApiKey, !Ref "AWS::NoValue" ]
+              - !If [ DeployAnthropicLambda, !Ref secretAnthropicApiKey, !Ref "AWS::NoValue" ]
+      Roles:
+        - !Ref functionIamRole
+
+  lambdaLayerLangchain:
+    Type: AWS::Lambda::LayerVersion
+    Properties: 
+      CompatibleRuntimes: 
+        - python3.10
+      Content: 
+        S3Bucket: !Ref deploymentS3BucketName
+        S3Key: !Sub ${deploymentS3BucketPrefix}/layers/langchain.zip
+      Description: Langchain Lambda layer
+      LayerName: langchain-layer
+    
+  lambdaLayerAnthropic:
+    Type: AWS::Lambda::LayerVersion
+    Condition: DeployAnthropicLambda
+    Properties: 
+      CompatibleRuntimes: 
+        - python3.10
+      Content: 
+        S3Bucket: !Ref deploymentS3BucketName
+        S3Key: !Sub ${deploymentS3BucketPrefix}/layers/anthropic.zip
+      Description: Anthropic Lambda layer
+      LayerName: anthropic-layer
+
+  lambdaFunctionAnthropic:
+    Type: AWS::Lambda::Function
+    Condition: DeployAnthropicLambda
+    Properties:
+      FunctionName: QnABot-Plugins-LLM-Anthropic
+      Handler: "index.lambda_handler"
+      Role: !Sub "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${functionIamRole}"
+      MemorySize: 128
+      Timeout: 30
+      Architectures:
+      - !Ref cpuArchitecture
+      Runtime: !Ref pythonRuntime       
+      Layers:
+        - !Ref lambdaLayerLangchain
+        - !Ref lambdaLayerAnthropic
+      Environment:
+        Variables:
+          ANTHROPIC_API_KEY_SECRET_NAME: !Ref anthropicApiKeySecretName
+      Code: lambda/llm-anthropic/
+      Tags:
+        - Key: StackName
+          Value: !Sub ${AWS::StackName}
+        - Key: StackId
+          Value: !Sub ${AWS::StackId}
+
+  lambdaFunctionAI21:
+    Type: AWS::Lambda::Function
+    Condition: DeployAI21Lambda
+    Properties:
+      FunctionName: QnABot-Plugins-LLM-AI21
+      Handler: "index.lambda_handler"
+      Role: !Sub "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${functionIamRole}"
+      MemorySize: 128
+      Timeout: 30
+      Architectures:
+      - !Ref cpuArchitecture
+      Runtime: !Ref pythonRuntime       
+      Layers:
+        - !Ref lambdaLayerLangchain
+      Environment:
+        Variables:
+          AI21_API_KEY_SECRET_NAME: !Ref ai21ApiKeySecretName
+      Code: lambda/llm-ai21/
+      Tags:
+        - Key: StackName
+          Value: !Sub ${AWS::StackName}
+        - Key: StackId
+          Value: !Sub ${AWS::StackId}
+
+Outputs:
+  secretAI21Console:
+    Description: Link to Secrets Manager console to input AI21 API Key
+    Value: !Sub "https://${AWS::Region}.console.aws.amazon.com/secretsmanager/secret?region=${AWS::Region}&name=${secretAi21ApiKey}"
+
+  secretAnthropicConsole:
+    Description: Link to Secrets Manager console to input Anthropic API Key
+    Value: !Sub "https://${AWS::Region}.console.aws.amazon.com/secretsmanager/secret?region=${AWS::Region}&name=${secretAnthropicApiKey}"
+    
+  lambdaFunctionAI21Arn:
+    Description: ARN of AI21 plugin Lambda Function
+    Value: !GetAtt lambdaFunctionAI21.Arn
+  
+  lambdaFunctionAnthropicArn:
+    Description: ARN of Anthropic plugin Lambda Function
+    Value: !GetAtt lambdaFunctionAnthropic.Arn
