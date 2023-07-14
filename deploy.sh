@@ -31,7 +31,7 @@ LAYERS_DIR=$PWD/layers
 LAMBDA_DIR=$PWD/lambda
 BUILD_DIR=$PWD/build
 REQS_TXT_PATH=requirements.txt
-TEMPLATE_NAME=Bot-2023-06-06_v3
+TEMPLATE_NAME=QnA-llm-plugins
 ECR_SAM_PYTHON_IMAGE=public.ecr.aws/sam/build-python3.10:1.90.0-20230706224408
 
 echo "\n------------------------------------------------------------------------------"
