@@ -3,6 +3,10 @@
 #   2. Create a deployment S3 bucket to store build artifacts if not already existing
 #   3. Installing required libraries and package them into ZIP files for Lambda layer creation. It will spin up a Docker container to install the packages to ensure architecture compatibility
 #   4. Package the CloudFormation template and upload it to the S3 bucket
+#
+# To deploy to non-default region, set AWS_DEFAULT_REGION to supported region
+# See: https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/ - E.g.
+# export AWS_DEFAULT_REGION=eu-west-1
 
 USAGE="$0 <cfn_bucket> <cfn_prefix> [public]"
 
@@ -30,15 +34,11 @@ LAMBDAS_DIR=$PWD/lambdas
 LAYERS=$(ls $LAYERS_DIR)
 LAMBDAS=$(ls $LAMBDAS_DIR)
 
-echo "Layers: $LAYERS"
-echo "Lambdas: $LAMBDAS"
 [ -z "$LAMBDAS" ] && echo "No directories found in $LAMBDAS_DIR" && exit 1
 
-echo "------------------------------------------------------------------------------"
-echo "Creating deployment S3 bucket if not exists and enabling ACLs if Public"
-echo "------------------------------------------------------------------------------"
 
 # Create bucket if it doesn't already exist
+echo "------------------------------------------------------------------------------"
 aws s3api list-buckets --query 'Buckets[].Name' | grep "\"$BUCKET\"" > /dev/null 2>&1
 if [ $? -ne 0 ]; then
   echo "Creating S3 bucket: $BUCKET"
@@ -47,6 +47,8 @@ if [ $? -ne 0 ]; then
 else
   echo "Using existing bucket: $BUCKET"
 fi
+echo "------------------------------------------------------------------------------"
+
 
 # get bucket region for owned accounts
 region=$(aws s3api get-bucket-location --bucket $BUCKET --query "LocationConstraint" --output text) || region="us-east-1"
@@ -66,8 +68,7 @@ for layer in $LAYERS; do
   dir=$LAYERS_DIR/$layer
   pushd $dir
   echo "Installing packages for: $layer"
-  rm -fr ./python
-  pip install -q -r ./requirements.txt --no-cache-dir --target=./python
+  pip install --upgrade -q -r ./requirements.txt --no-cache-dir --target=./python
   echo "Done installing dependencies for $layer!"
   popd
 done
@@ -76,7 +77,6 @@ done
 echo "------------------------------------------------------------------------------"
 echo "Packaging CloudFormation artifacts"
 echo "------------------------------------------------------------------------------"
-templates=()
 for lambda in $LAMBDAS; do
   dir=$LAMBDAS_DIR/$lambda
   pushd $dir
@@ -84,12 +84,12 @@ for lambda in $LAMBDAS; do
   rm -fr ./out; mkdir ./out
   template=${lambda}.yaml
   s3_template=s3://${BUCKET}/${PREFIX}/${template}
+  https_template="https://s3.${region}.amazonaws.com/${BUCKET}/${PREFIX}/${template}"
   aws cloudformation package --template-file ./template.yml --output-template-file ./out/${template} --s3-bucket $BUCKET --s3-prefix $PREFIX --region ${region} || exit 1
-  echo "Uploading template file to: s3://${BUCKET}/${PREFIX}/${template}"
-  aws s3 cp ./out/${template} $s3_template
+  echo "Uploading template file to: ${s3_template}"
+  aws s3 cp ./out/${template} ${s3_template}
   echo "Validating template"
-  #aws cloudformation validate-template --template-url $s3_template > /dev/null || exit 1
-  templates+=($s3_template)
+  aws cloudformation validate-template --template-url ${https_template} > /dev/null || exit 1
   popd
 done
 
@@ -104,13 +104,16 @@ if $PUBLIC; then
     done
 fi
 
-echo "\n------------------------------------------------------------------------------"
+echo "------------------------------------------------------------------------------"
 echo "Outputs"
-echo "------------------------------------------------------------------------------\n"
-for template in $templates; do
-  echo Template URL: $template
-  echo CF Launch URL: https://${region}.console.aws.amazon.com/cloudformation/home?region=${region}#/stacks/create/review?templateURL=${template}
+echo "------------------------------------------------------------------------------"
+for lambda in $LAMBDAS; do
+  template="https://s3.${region}.amazonaws.com/${BUCKET}/${PREFIX}/${lambda}.yaml"
+  echo $lambda
+  echo "=============="
+  echo " - Template URL: $template"
+  echo " - Deploy URL:   https://${region}.console.aws.amazon.com/cloudformation/home?region=${region}#/stacks/create/review?templateURL=${template}&stackName=${lambda}"
+  echo ""
 done
-
-echo "\nAll done!"
+echo "All done!"
 exit 0
