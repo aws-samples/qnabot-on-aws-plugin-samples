@@ -5,7 +5,7 @@
 #   4. Package the CloudFormation template and upload it to the S3 bucket
 #
 # To deploy to non-default region, set AWS_DEFAULT_REGION to supported region
-# See: https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/ - E.g.
+# See: https://docs.aws.amazon.com/solutions/latest/qnabot-on-aws/supported-aws-regions.html - E.g.
 # export AWS_DEFAULT_REGION=eu-west-1
 
 USAGE="$0 <cfn_bucket> <cfn_prefix> [public]"
