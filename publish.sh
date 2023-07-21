@@ -64,15 +64,18 @@ fi
 echo "------------------------------------------------------------------------------"
 echo "Installing Python packages for AWS Lambda Layers"
 echo "------------------------------------------------------------------------------"
+DOCKER_IMAGE=public.ecr.aws/sam/build-python3.10:1.90.0-20230706224408
+echo "Docker run a container to build packages"
+pushd $LAYERS_DIR
+container_id=$(docker run -d -it -v $(pwd):/var/task $DOCKER_IMAGE)
 for layer in $LAYERS; do
-  dir=$LAYERS_DIR/$layer
-  pushd $dir
   echo "Installing packages for: $layer"
-  pip install --upgrade -q -r ./requirements.txt --no-cache-dir --target=./python
+  docker exec $container_id pip3 install --upgrade -q -r ${layer}/requirements.txt --no-cache-dir --target=${layer}/python || exit 1
   echo "Done installing dependencies for $layer!"
-  popd
 done
-
+echo "Stopping the docker container"
+docker stop $container_id
+popd
 
 echo "------------------------------------------------------------------------------"
 echo "Packaging CloudFormation artifacts"

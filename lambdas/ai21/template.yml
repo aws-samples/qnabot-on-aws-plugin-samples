@@ -46,7 +46,7 @@ Resources:
     Properties: 
       CompatibleRuntimes: 
         - python3.10
-      Content: ../../layers/langchain/python
+      Content: ../../layers/langchain
       Description: Langchain Lambda layer
       LayerName: langchain-layer
 
