@@ -108,11 +108,12 @@ echo "--------------------------------------------------------------------------
 echo "Outputs"
 echo "------------------------------------------------------------------------------"
 for lambda in $LAMBDAS; do
+  stackname=QNABOT-LLM-$(echo $lambda | tr '[:lower:]' '[:upper:]' | tr '_' '-')
   template="https://s3.${region}.amazonaws.com/${BUCKET}/${PREFIX}/${lambda}.yaml"
-  echo $lambda
+  echo $stackname
   echo "=============="
   echo " - Template URL: $template"
-  echo " - Deploy URL:   https://${region}.console.aws.amazon.com/cloudformation/home?region=${region}#/stacks/create/review?templateURL=${template}&stackName=${lambda}"
+  echo " - Deploy URL:   https://${region}.console.aws.amazon.com/cloudformation/home?region=${region}#/stacks/create/review?templateURL=${template}&stackName=${stackname}"
   echo ""
 done
 echo "All done!"

@@ -1,12 +1,20 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: QnABot on AWS LLM Plugin for Anthropic - v0.1.0
    
+Parameters:
+  APIKey:
+    Type: String
+    Description: Anthropic API Key (stored in Secrets Manager - see stack Outputs)
+    Default: ''
+    NoEcho: true
+
 Resources:
   ApiKeySecret:
     Type: AWS::SecretsManager::Secret
     Properties: 
       Description: API Key
       Name: !Ref AWS::StackName
+      SecretString: !Ref APIKey
 
   LambdaFunctionRole:
     Type: AWS::IAM::Role
@@ -55,7 +63,7 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       Handler: "index.lambda_handler"
-      Role: !Ref LambdaFunctionRole
+      Role: !GetAtt 'LambdaFunctionRole.Arn'
       MemorySize: 128
       Timeout: 60
       Runtime: python3.10       
