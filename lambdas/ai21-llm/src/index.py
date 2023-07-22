@@ -1,4 +1,6 @@
-import boto3, os
+import boto3
+import os
+import json
 from botocore.exceptions import ClientError
 from langchain.llms import AI21
 
@@ -26,14 +28,14 @@ def get_llm(params):
     return model
 
 def lambda_handler(event, context):
-    print("Event: ", event)
+    print("Event: ", json.dumps(event))
     global llm
     prompt = event["prompt"]
     model_params = event["parameters"] 
     if (llm is None):
         llm = get_llm(model_params)
     generated_text = llm(prompt)
-    print("Result:", generated_text)
+    print("Result:", json.dumps(generated_text))
     return {
         'generated_text': generated_text
     }

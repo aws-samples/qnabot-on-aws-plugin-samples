@@ -1,4 +1,6 @@
-import boto3, os
+import boto3
+import os
+import json
 from botocore.exceptions import ClientError
 from langchain.chat_models import ChatAnthropic
 from langchain.schema import HumanMessage
@@ -27,7 +29,7 @@ def get_llm(params):
     return model
 
 def lambda_handler(event, context):
-    print("Event: ", event)
+    print("Event: ", json.dumps(event))
     global llm
     prompt = event["prompt"]
     model_params = event["parameters"] 
@@ -39,7 +41,7 @@ def lambda_handler(event, context):
         )
     ]
     generated_text = llm(messages).content
-    print("Result:", generated_text)
+    print("Result:", json.dumps(generated_text))
     return {
         'generated_text': generated_text
     }
