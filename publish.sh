@@ -65,7 +65,7 @@ echo "--------------------------------------------------------------------------
 echo "Installing Python packages for AWS Lambda Layers"
 echo "------------------------------------------------------------------------------"
 DOCKER_IMAGE=public.ecr.aws/sam/build-python3.10:1.90.0-20230706224408
-echo "Docker run a container to build packages"
+# Use docker container to build packages, ensuring object code compatability for lambda runtime
 pushd $LAYERS_DIR
 container_id=$(docker run -d -it -v $(pwd):/var/task $DOCKER_IMAGE)
 for layer in $LAYERS; do
@@ -111,7 +111,7 @@ echo "--------------------------------------------------------------------------
 echo "Outputs"
 echo "------------------------------------------------------------------------------"
 for lambda in $LAMBDAS; do
-  stackname=QNABOT-LLM-$(echo $lambda | tr '[:lower:]' '[:upper:]' | tr '_' '-')
+  stackname=QNABOT-$(echo $lambda | tr '[:lower:]' '[:upper:]' | tr '_' '-')
   template="https://s3.${region}.amazonaws.com/${BUCKET}/${PREFIX}/${lambda}.yaml"
   echo $stackname
   echo "=============="
