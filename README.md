@@ -1,8 +1,9 @@
 # QnABot Sample Plugins
 
 This repository provides sample LLM Lambda functions for use with QnABot, installable using CloudFormation.
-1. AI21: Uses AI21's Jurassic model API - requires an AI21 account with an API Key
-2. Anthropic: Uses Anthropic's Claude model API - requires an Anthropic account with an API Key
+1. AI21 LLM: Uses AI21's Jurassic model API - requires an AI21 account with an API Key
+2. Anthropic LLM: Uses Anthropic's Claude model API - requires an Anthropic account with an API Key
+3. Amazon Bedrock Embeddings and LLM: Uses Amazon Bedrock service API (preview) - requires access to Amazon Bedrock service (current in private preview)
 
 
 ### (optional) Build and Publish LCA CloudFormation artifacts
@@ -31,15 +32,20 @@ When complete, it displays the URLS for the CloudFormation templates, 1-click UR
 ------------------------------------------------------------------------------
 Outputs
 ------------------------------------------------------------------------------
-QNABOT-LLM-AI21
+QNABOT-AI21-LLM
 ==============
- - Template URL: https://s3.us-east-1.amazonaws.com/bobs-artifacts-bucket/qnabot-plugins/ai21.yaml
- - Deploy URL:   https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://s3.us-east-1.amazonaws.com/bobs-artifacts-bucket/qnabot-plugins/ai21.yaml&stackName=QNABOT-LLM-AI21
+ - Template URL: https://s3.us-east-1.amazonaws.com/bobs-artifacts-bucket/qnabot-plugins/ai21-llm.yaml
+ - Deploy URL:   https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://s3.us-east-1.amazonaws.com/bobs-artifacts-bucket/qnabot-plugins/ai21-llm.yaml&stackName=QNABOT-AI21-LLM
 
-QNABOT-LLM-ANTHROPIC
+QNABOT-ANTHROPIC-LLM
 ==============
- - Template URL: https://s3.us-east-1.amazonaws.com/bobs-artifacts-bucket/qnabot-plugins/anthropic.yaml
- - Deploy URL:   https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://s3.us-east-1.amazonaws.com/bobs-artifacts-bucket/qnabot-plugins/anthropic.yaml&stackName=QNABOT-LLM-ANTHROPIC
+ - Template URL: https://s3.us-east-1.amazonaws.com/bobs-artifacts-bucket/qnabot-plugins/anthropic-llm.yaml
+ - Deploy URL:   https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://s3.us-east-1.amazonaws.com/bobs-artifacts-bucket/qnabot-plugins/anthropic-llm.yaml&stackName=QNABOT-ANTHROPIC-LLM
+
+QNABOT-BEDROCK-EMBEDDINGS-LLM
+==============
+ - Template URL: https://s3.us-east-1.amazonaws.com/bobs-artifacts-bucket/qnabot-plugins/bedrock-embeddings-llm.yaml
+ - Deploy URL:   https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://s3.us-east-1.amazonaws.com/bobs-artifacts-bucket/qnabot-plugins/bedrock-embeddings-llm.yaml&stackName=QNABOT-BEDROCK-EMBEDDINGS-LLM
 ```
 
 ### Deploy a new stack
