@@ -70,6 +70,6 @@ Outputs:
     Description: Link to Secrets Manager console to input API Key
     Value: !Sub "https://${AWS::Region}.console.aws.amazon.com/secretsmanager/secret?region=${AWS::Region}&name=${AWS::StackName}"
     
-  LambdaFunctionArn:
+  LLMLambdaArn:
     Description: Lambda function ARN (use for QnABot param "LLMLambdaArn")
     Value: !GetAtt LambdaFunction.Arn
