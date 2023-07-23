@@ -67,13 +67,22 @@ echo "--------------------------------------------------------------------------
 DOCKER_IMAGE=public.ecr.aws/sam/build-python3.10:1.90.0-20230706224408
 # Use docker container to build packages, ensuring object code compatability for lambda runtime
 pushd $LAYERS_DIR
+echo "Start container"
 container_id=$(docker run -d -it -v $(pwd):/var/task $DOCKER_IMAGE)
 for layer in $LAYERS; do
   echo "Installing packages for: $layer"
-  docker exec $container_id pip3 install --upgrade -q -r ${layer}/requirements.txt --no-cache-dir --target=${layer}/python || exit 1
-  echo "Done installing dependencies for $layer!"
+  docker exec -it $container_id sh -c "pip3 install \
+    --quiet \
+    --no-compile \
+    --no-cache-dir \
+    --disable-pip-version-check \
+    --root-user-action=ignore \
+    --requirement ${layer}/requirements.txt \
+    --target=${layer}/python \
+      2>&1 | grep -v 'WARNING: Target directory'"
+  echo "Done installing dependencies for $layer"
 done
-echo "Stopping the docker container"
+echo "Stop container"
 docker stop $container_id
 popd
 
@@ -84,11 +93,18 @@ for lambda in $LAMBDAS; do
   dir=$LAMBDAS_DIR/$lambda
   pushd $dir
   echo "PACKAGING $lambda"
-  rm -fr ./out; mkdir ./out
+  mkdir -p ./out
   template=${lambda}.yaml
   s3_template=s3://${BUCKET}/${PREFIX}/${template}
   https_template="https://s3.${region}.amazonaws.com/${BUCKET}/${PREFIX}/${template}"
-  aws cloudformation package --template-file ./template.yml --output-template-file ./out/${template} --s3-bucket $BUCKET --s3-prefix $PREFIX --region ${region} || exit 1
+  # avoid re-packaging source zips if only file timestamps have changed - per https://blog.revolve.team/2022/05/19/lambda-build-consistency/
+  sudo find $LAYERS_DIR -exec touch -a -m -t"202307230000.00" {} \;
+  sudo find ./src -exec touch -a -m -t"202307230000.00" {} \;
+  aws cloudformation package \
+  --template-file ./template.yml \
+  --output-template-file ./out/${template} \
+  --s3-bucket $BUCKET --s3-prefix $PREFIX \
+  --region ${region} || exit 1
   echo "Uploading template file to: ${s3_template}"
   aws s3 cp ./out/${template} ${s3_template}
   echo "Validating template"
