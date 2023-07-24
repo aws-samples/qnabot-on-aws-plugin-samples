@@ -3,6 +3,7 @@ from langchain.llms import Bedrock
 
 # global variables - avoid creating a new model for every request
 llm = None
+llm_params = None
 
 def get_llm(model_params):
     print("Getting Bedrock model from LangChain")
@@ -15,9 +16,11 @@ def get_llm(model_params):
 def lambda_handler(event, context):
     print("Event: ", json.dumps(event))
     global llm
+    global llm_params
     prompt = event["prompt"]
     model_params = event["parameters"] or {}
-    if (llm is None):
+    if (llm is None or llm_params != model_params):
+        llm_params = model_params
         llm = get_llm(model_params)
     generated_text = llm(prompt)
     print("Result:", json.dumps(generated_text))
