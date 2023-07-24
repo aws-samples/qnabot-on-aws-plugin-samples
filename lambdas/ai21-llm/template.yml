@@ -1,0 +1,75 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: QnABot on AWS LLM Plugin for AI21 - v0.1.0
+
+Parameters:
+  APIKey:
+    Type: String
+    Description: AI21 API Key (stored in Secrets Manager - see stack Outputs)
+    Default: ''
+    NoEcho: true
+
+Resources:
+  ApiKeySecret:
+    Type: AWS::SecretsManager::Secret
+    Properties: 
+      Description: API Key
+      Name: !Ref AWS::StackName
+      SecretString: !Ref APIKey
+
+  LambdaFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'secretsmanager:GetResourcePolicy'
+                  - 'secretsmanager:GetSecretValue'
+                  - 'secretsmanager:DescribeSecret'
+                  - 'secretsmanager:ListSecretVersionIds'
+                Resource: !Ref ApiKeySecret
+          PolicyName: SecretsManagerPolicy
+
+  LangchainLambdaLayer:
+    Type: AWS::Lambda::LayerVersion
+    Properties: 
+      CompatibleRuntimes: 
+        - python3.10
+      Content: ../../layers/langchain
+      Description: Langchain Lambda layer
+      LayerName: langchain-layer
+
+  LambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: "index.lambda_handler"
+      Role: !GetAtt 'LambdaFunctionRole.Arn'
+      MemorySize: 128
+      Timeout: 60
+      Runtime: python3.10       
+      Layers:
+        - !Ref LangchainLambdaLayer
+      Environment:
+        Variables:
+          API_KEY_SECRET_NAME: !Ref AWS::StackName
+      Code: ./src
+
+Outputs:
+  APIKeySecret:
+    Description: Link to Secrets Manager console to input API Key
+    Value: !Sub "https://${AWS::Region}.console.aws.amazon.com/secretsmanager/secret?region=${AWS::Region}&name=${AWS::StackName}"
+    
+  LLMLambdaArn:
+    Description: Lambda function ARN (use for QnABot param "LLMLambdaArn")
+    Value: !GetAtt LambdaFunction.Arn
