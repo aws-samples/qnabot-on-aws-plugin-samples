@@ -62,7 +62,7 @@ Resources:
   LambdaFunction:
     Type: AWS::Lambda::Function
     Properties:
-      Handler: "index.lambda_handler"
+      Handler: "llm.lambda_handler"
       Role: !GetAtt 'LambdaFunctionRole.Arn'
       MemorySize: 128
       Timeout: 60
