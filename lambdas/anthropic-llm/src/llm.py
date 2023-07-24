@@ -24,8 +24,7 @@ def get_secret(secret_name):
 
 def call_llm(parameters, prompt):
     api_key = get_secret(API_KEY_SECRET_NAME)
-    # default parameters.. see https://docs.anthropic.com/claude/reference/complete_post for additional
-    # allowed parameters
+    # # Default parameters
     data = {
         "max_tokens_to_sample": MAX_TOKENS_TO_SAMPLE,
         "model": DEFAULT_MODEL
@@ -59,10 +58,11 @@ Example Test Event:
 {
   "prompt": "\n\nHuman:Why is the sky blue?\n\nAssistant:",
   "parameters": {
-    "temperature": 0,
-    "model": "claude-instant-1"
+    "model": "claude-instant-1",
+    "temperature": 0
   }
 }
+For supported parameters, see the link to Anthropic docs: https://docs.anthropic.com/claude/reference/complete_post
 """
 def lambda_handler(event, context):
     print("Event: ", json.dumps(event))
