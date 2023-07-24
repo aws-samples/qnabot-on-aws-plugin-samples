@@ -41,24 +41,6 @@ Resources:
                 Resource: !Ref ApiKeySecret
           PolicyName: SecretsManagerPolicy
 
-  LangchainLambdaLayer:
-    Type: AWS::Lambda::LayerVersion
-    Properties: 
-      CompatibleRuntimes: 
-        - python3.10
-      Content: ../../layers/langchain
-      Description: Langchain Lambda layer
-      LayerName: langchain-layer
-
-  AnthropicLambdaLayer:
-    Type: AWS::Lambda::LayerVersion
-    Properties: 
-      CompatibleRuntimes: 
-        - python3.10
-      Content: ../../layers/anthropic
-      Description: Anthropic Lambda layer
-      LayerName: anthropic-layer
-
   LambdaFunction:
     Type: AWS::Lambda::Function
     Properties:
@@ -67,9 +49,6 @@ Resources:
       MemorySize: 128
       Timeout: 60
       Runtime: python3.10       
-      Layers:
-        - !Ref LangchainLambdaLayer
-        - !Ref AnthropicLambdaLayer
       Environment:
         Variables:
           API_KEY_SECRET_NAME: !Ref AWS::StackName
