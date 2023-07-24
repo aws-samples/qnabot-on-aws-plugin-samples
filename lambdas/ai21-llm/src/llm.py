@@ -56,7 +56,7 @@ def call_llm(parameters, prompt):
 """
 Example Test Event:
 {
-  "prompt": "\n\nHuman:Why is the sky blue?\n\nAssistant:",
+  "prompt": "Why is the sky blue?\nAssistant:",
   "parameters": {
     "model_type": "mid",
     "temperature": 0
