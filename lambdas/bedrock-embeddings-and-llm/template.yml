@@ -172,15 +172,6 @@ Resources:
       CompatibleRuntimes:
         - python3.10
 
-  LangchainLambdaLayer:
-    Type: AWS::Lambda::LayerVersion
-    Properties: 
-      CompatibleRuntimes: 
-        - python3.10
-      Content: ../../layers/langchain
-      Description: Langchain Lambda layer
-      LayerName: langchain-layer
-
   LambdaFunctionRole:
     Type: AWS::IAM::Role
     Properties:
@@ -215,7 +206,6 @@ Resources:
       MemorySize: 128
       Environment:
         Variables:
-          BEDROCK_MODEL_IDENTIFIER: 'amazon.titan-e1t-medium'
           EMBEDDING_MAX_WORDS: 300 
       Code: ./src
 
@@ -227,7 +217,6 @@ Resources:
       Runtime: python3.10
       Layers: 
         - !Ref BedrockBoto3Layer
-        - !Ref LangchainLambdaLayer
       Timeout: 60
       MemorySize: 128
       Code: ./src

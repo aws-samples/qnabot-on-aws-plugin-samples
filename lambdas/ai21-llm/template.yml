@@ -41,25 +41,14 @@ Resources:
                 Resource: !Ref ApiKeySecret
           PolicyName: SecretsManagerPolicy
 
-  LangchainLambdaLayer:
-    Type: AWS::Lambda::LayerVersion
-    Properties: 
-      CompatibleRuntimes: 
-        - python3.10
-      Content: ../../layers/langchain
-      Description: Langchain Lambda layer
-      LayerName: langchain-layer
-
   LambdaFunction:
     Type: AWS::Lambda::Function
     Properties:
-      Handler: "index.lambda_handler"
+      Handler: "llm.lambda_handler"
       Role: !GetAtt 'LambdaFunctionRole.Arn'
       MemorySize: 128
       Timeout: 60
       Runtime: python3.10       
-      Layers:
-        - !Ref LangchainLambdaLayer
       Environment:
         Variables:
           API_KEY_SECRET_NAME: !Ref AWS::StackName
