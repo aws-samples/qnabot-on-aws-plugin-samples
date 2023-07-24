@@ -64,26 +64,23 @@ fi
 echo "------------------------------------------------------------------------------"
 echo "Installing Python packages for AWS Lambda Layers"
 echo "------------------------------------------------------------------------------"
-DOCKER_IMAGE=public.ecr.aws/sam/build-python3.10:1.90.0-20230706224408
-# Use docker container to build packages, ensuring object code compatability for lambda runtime
 pushd $LAYERS_DIR
-echo "Start container"
-container_id=$(docker run -d -it -v $(pwd):/var/task $DOCKER_IMAGE)
 for layer in $LAYERS; do
   echo "Installing packages for: $layer"
-  docker exec -it $container_id sh -c "pip3 install \
-    --quiet \
-    --no-compile \
-    --no-cache-dir \
-    --disable-pip-version-check \
-    --root-user-action=ignore \
-    --requirement ${layer}/requirements.txt \
-    --target=${layer}/python \
-      2>&1 | grep -v 'WARNING: Target directory'"
+  # ref docs: https://docs.aws.amazon.com/lambda/latest/dg/python-package.html#python-package-pycache
+  pip install \
+  --quiet \
+  --platform manylinux2014_x86_64 \
+  --target=package \
+  --implementation cp \
+  --python-version 3.10 \
+  --only-binary=:all: \
+  --no-compile \
+  --requirement ${layer}/requirements.txt \
+  --target=${layer}/python 2>&1 | \
+    grep -v "WARNING: Target directory"
   echo "Done installing dependencies for $layer"
 done
-echo "Stop container"
-docker stop $container_id
 popd
 
 echo "------------------------------------------------------------------------------"
