@@ -11,7 +11,7 @@ AI21_QA_PROMPT_TEMPLATE = AMAZON_QA_PROMPT_TEMPLATE
 
 def getModelSettings(modelId):
     params = {
-        "modelId": "modelId",
+        "modelId": modelId,
         "temperature": 0
     }
     settings = {
