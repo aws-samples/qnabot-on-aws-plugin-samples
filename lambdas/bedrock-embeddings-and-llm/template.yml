@@ -3,6 +3,13 @@ Description: QnABot on AWS LLM Plugin for Anthropic - v0.1.0
 
 Parameters:
 
+  EmbeddingsModelId:
+    Type: String
+    Default: amazon.titan-e1t-medium
+    AllowedValues:
+      - amazon.titan-e1t-medium
+    Description: Bedrock Embeddings ModelId (Bedrock preview access only)
+
   LLMModelId:
     Type: String
     Default: amazon.titan-tg1-large
@@ -217,6 +224,7 @@ Resources:
       MemorySize: 128
       Environment:
         Variables:
+          DEFAULT_MODEL_ID: !Ref EmbeddingsModelId
           EMBEDDING_MAX_WORDS: 300 
       Code: ./src
 
@@ -259,7 +267,8 @@ Resources:
     Type: Custom::OutputSettings
     Properties:
       ServiceToken: !GetAtt OutputSettingsFunction.Arn
-      ModelId: !Ref LLMModelId
+      EmbeddingsModelId: !Ref EmbeddingsModelId
+      LLMModelId: !Ref LLMModelId
 
 Outputs:
 
@@ -274,6 +283,18 @@ Outputs:
   LLMLambdaArn:
     Description: Lambda function for LLM (use for QnABot param "LLMLambdaArn")
     Value: !GetAtt LLMLambdaFunction.Arn
+
+  QnABotSettingEmbeddingsScoreThreshold:
+    Description: QnABot Designer Setting "EMBEDDINGS_SCORE_THRESHOLD"
+    Value: !GetAtt OutputSettings.EMBEDDINGS_SCORE_THRESHOLD
+
+  QnABotSettingEmbeddingsScoreAnswerThreshold:
+    Description: QnABot Designer Setting "EMBEDDINGS_SCORE_ANSWER_THRESHOLD"
+    Value: !GetAtt OutputSettings.EMBEDDINGS_SCORE_ANSWER_THRESHOLD
+
+  QnABotSettingEmbeddingsTextPassageScoreThreshold:
+    Description: QnABot Designer Setting "EMBEDDINGS_TEXT_PASSAGE_SCORE_THRESHOLD"
+    Value: !GetAtt OutputSettings.EMBEDDINGS_TEXT_PASSAGE_SCORE_THRESHOLD
 
   QnABotSettingGenerateQueryPromptTemplate:
     Description: QnABot Designer Setting "LLM_GENERATE_QUERY_PROMPT_TEMPLATE"
