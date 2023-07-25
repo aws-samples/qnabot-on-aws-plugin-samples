@@ -11,7 +11,7 @@ Parameters:
   LLMModelType:
     Type: String
     Default: mid
-    AllowedValues: # to update list of available models
+    AllowedValues:
       - light
       - mid
       - ultra

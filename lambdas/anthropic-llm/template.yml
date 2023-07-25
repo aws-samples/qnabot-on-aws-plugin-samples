@@ -11,9 +11,10 @@ Parameters:
   LLMModel:
     Type: String
     Default: claude-instant-1
-    AllowedValues: # to update list of available models
+    AllowedValues:
       - claude-instant-1
       - claude-1
+      - claude-2
     Description: Anthropic LLM Model
 
 Resources:
