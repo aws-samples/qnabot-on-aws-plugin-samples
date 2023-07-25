@@ -4,8 +4,10 @@ import os
 
 # Defaults
 DEFAULT_MODEL_ID = os.environ.get("DEFAULT_MODEL_ID","amazon.titan-tg1-large")
-AWS_REGION = os.environ["AWS_REGION"]
-ENDPOINT_URL = os.environ.get("ENDPOINT_URL", f'https://bedrock.{AWS_REGION}.amazonaws.com')
+# AWS_REGION = os.environ["AWS_REGION"]
+AWS_REGION = "us-west-2" # set to us-west-2 during private preview
+# ENDPOINT_URL = os.environ.get("ENDPOINT_URL", f'https://bedrock.{AWS_REGION}.amazonaws.com')
+ENDPOINT_URL = os.environ.get("ENDPOINT_URL", 'https://prod.us-west-2.frontend.bedrock.aws.dev') # set to specific private preview endpoint url
 DEFAULT_MAX_TOKENS = 256
 
 # global variables - avoid creating a new client for every request
