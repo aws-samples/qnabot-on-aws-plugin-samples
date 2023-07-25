@@ -23,7 +23,7 @@ Run the script with up to 3 parameters:
 - public: (optional) Adding the argument "public" will set public-read acl on all published artifacts, for sharing with any account.
 ```
 
-To deploy to non-default region, set environment variable `AWS_DEFAULT_REGION` to a region supported by QnABot. See: [Supported AWS Regions](https://docs.aws.amazon.com/solutions/latest/qnabot-on-aws/supported-aws-regions.html) 
+To deploy to a non-default region, set environment variable `AWS_DEFAULT_REGION` to a region supported by QnABot. See: [Supported AWS Regions](https://docs.aws.amazon.com/solutions/latest/qnabot-on-aws/supported-aws-regions.html) 
 E.g. to deploy in Ireland run `export AWS_DEFAULT_REGION=eu-west-1` before running the publish script. 
 
 It downloads package dependencies, builds code zipfiles, and copies templates and zip files to the cfn_bucket.
@@ -34,18 +34,18 @@ Outputs
 ------------------------------------------------------------------------------
 QNABOT-AI21-LLM
 ==============
- - Template URL: https://s3.us-east-1.amazonaws.com/bobs-artifacts-bucket/qnabot-plugins/ai21-llm.yaml
- - Deploy URL:   https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://s3.us-east-1.amazonaws.com/bobs-artifacts-bucket/qnabot-plugins/ai21-llm.yaml&stackName=QNABOT-AI21-LLM
+ - Template URL: https://s3.us-east-1.amazonaws.com/xxxxx-cfn-bucket/qnabot-plugins/ai21-llm.yaml
+ - Deploy URL:   https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://s3.us-east-1.amazonaws.com/xxxxx-cfn-bucket/qnabot-plugins/ai21-llm.yaml&stackName=QNABOT-AI21-LLM
 
 QNABOT-ANTHROPIC-LLM
 ==============
- - Template URL: https://s3.us-east-1.amazonaws.com/bobs-artifacts-bucket/qnabot-plugins/anthropic-llm.yaml
- - Deploy URL:   https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://s3.us-east-1.amazonaws.com/bobs-artifacts-bucket/qnabot-plugins/anthropic-llm.yaml&stackName=QNABOT-ANTHROPIC-LLM
+ - Template URL: https://s3.us-east-1.amazonaws.com/xxxxx-cfn-bucket/qnabot-plugins/anthropic-llm.yaml
+ - Deploy URL:   https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://s3.us-east-1.amazonaws.com/xxxxx-cfn-bucket/qnabot-plugins/anthropic-llm.yaml&stackName=QNABOT-ANTHROPIC-LLM
 
 QNABOT-BEDROCK-EMBEDDINGS-LLM
 ==============
- - Template URL: https://s3.us-east-1.amazonaws.com/bobs-artifacts-bucket/qnabot-plugins/bedrock-embeddings-llm.yaml
- - Deploy URL:   https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://s3.us-east-1.amazonaws.com/bobs-artifacts-bucket/qnabot-plugins/bedrock-embeddings-llm.yaml&stackName=QNABOT-BEDROCK-EMBEDDINGS-LLM
+ - Template URL: https://s3.us-east-1.amazonaws.com/xxxxx-cfn-bucket/qnabot-plugins/bedrock-embeddings-llm.yaml
+ - Deploy URL:   https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://s3.us-east-1.amazonaws.com/xxxxx-cfn-bucket/qnabot-plugins/bedrock-embeddings-llm.yaml&stackName=QNABOT-BEDROCK-EMBEDDINGS-LLM
 ```
 
 ### Deploy a new stack
@@ -56,6 +56,7 @@ Use AWS CloudFormation to deploy one or more of the sample plug in Lambdas in yo
 *Note: If you are logged in as an IAM user, ensure your account has permissions to create and manage the necessary resources and components for this application.*
 2. Choose one of the **Launch Stack** buttons below for your desired AWS region to open the AWS CloudFormation console and create a new stack. AWS Full-Stack Template is supported in the following regions:
 
+**TODO: Update links when published**
 Plugin | Region name | Region code | Launch
 --- | --- | --- | ---
 QNABOT-AI21-LLM | US East (N. Virginia) | us-east-1 | [![Launch Stack](https://cdn.rawgit.com/buildkite/cloudformation-launch-stack-button-svg/master/launch-stack.svg)](https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://s3.us-east-1.amazonaws.com/bobs-artifacts-bucket/qnabot-plugins/ai21-llm.yaml&stackName=QNABOT-AI21-LLM)
@@ -72,28 +73,42 @@ QNABOT-BEDROCK-EMBEDDINGS-AND-LLM | US East (N. Virginia) | us-east-1 | [![Launc
 
 ### (Optional) Modify Third Party API Keys in Secrets Manager
 
-When your stack is CREATED, choose the **Outputs** tab. Use the link for `APIKeySecret` to open AWS Secrets Manager to inspect or edit your API Key in `Secret value`.
+When your stack is CREATE_COMPLETE, choose the **Outputs** tab. Use the link for `APIKeySecret` to open AWS Secrets Manager to inspect or edit your API Key in `Secret value`.
 
 
 ### Configure QnABot to use your new LLM function
 
-When your stack is CREATED, choose the **Outputs** tab
+When your stack is CREATE_COMPLETE, choose the **Outputs** tab
 - Copy the value for `LLMLambdaArn` 
 - Deploy or update a QnABot stack, selecting **LLMApi** as `LAMBDA`, and for **LLMLambdaArn** enter the Lambda Arn copied above. 
 
 For more information, see [QnABot LLM README - Lambda Function](https://github.com/aws-solutions/qnabot-on-aws/blob/feature/llm-summarize-bedrock-falcon40B-kendrarag-kendraindexandcrawler/docs/LLM_Retrieval_and_generative_question_answering/README.md#3-lambda-function)  **TODO: Update link**
 
-**------------  Rework below ---------------**
-  
-### Update QnABot Settings with model parameters
-Follow the steps below to try the AI21 Foudation Model API in this QnA bot. This function call __j2-jumbo-instruct/complete__ by default.
-- Update the __LLM_QA_MODEL_PARAMS__  to `{"temperature":0,"maxTokens":12,"minTokens":0,"topP":1,"topKReturn":1,"model_type":"j2-jumbo-instruct"}`
+### (Optional) Configure QnABot to use your new Embeddings function *(currently only available for Bedrock)*
 
-### Make Task-Specific (Contextual Answers [BETA]) API call
-Follow the steps below to try the Contextual Answers API in this QnA bot
+When your stack is CREATE_COMPLETE, choose the **Outputs** tab
+- Copy the value for `EmbeddingsLambdaArn` 
+- Deploy or update a QnABot stack, selecting **EmbeddingsApi** as `LAMBDA`, and for **EmbeddingsLambdaArn** enter the Lambda Arn copied above. 
 
-1. Backup your prompt text in __LLM_QA_PROMPT_TEMPLATE__
-2. Update the __LLM_QA_PROMPT_TEMPLATE__ to `{context}||question:{query}`
-3. Backup your parameter in __LLM_QA_MODEL_PARAMS__
-4. Update the __LLM_QA_MODEL_PARAMS__  to `{"temperature":0,"maxTokens":64,"minTokens":12,"topP":1,"topKReturn":1,"contextualAnswers":"TRUE"}`
+For more information, see [QnABot Embeddings README - Lambda Function](https://github.com/aws-solutions/qnabot-on-aws/blob/feature/llm-summarize-bedrock-falcon40B-kendrarag-kendraindexandcrawler/docs/semantic_matching_using_LLM_embeddings/README.md#2-lambda-function)  **TODO: Update link**
+
+
+### Update QnABot Settings 
+
+When the QnABot stack is CREATE_COMPLETE or UPDATE_COMPLETE:
+- Keep your stack **Outputs** tab open
+- In a new browser window, log into QnABot Content Designer (setting your password the first time)
+- From the Content Designer tools (☰) menu, choose **Settings**
+- From your stack **Outputs** tab, copy setting values from each of the outputs named `QnABotSetting...`
+  - use this copied value for the corresponding QnABot setting (identified in the output Description column)
+  - do this for all settings. Note: the Bedrock stack has additional settings for Embeddings score thresholds.
+  - Choose **Save** when complete.
+       
+      *Copy Stack Outputs:*  
+
+      <img src="./images/settings-outputs.png" alt="Settings" width="600">  
+      
+      *To corresponding Designer Settings:*  
+
+      <img src="./images/settings-designer.png" alt="Settings" width="600">
 
