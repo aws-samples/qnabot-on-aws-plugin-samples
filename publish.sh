@@ -31,11 +31,6 @@ fi
 # Config
 LAYERS_DIR=$PWD/layers
 LAMBDAS_DIR=$PWD/lambdas
-LAYERS=$(ls $LAYERS_DIR)
-LAMBDAS=$(ls $LAMBDAS_DIR)
-
-[ -z "$LAMBDAS" ] && echo "No directories found in $LAMBDAS_DIR" && exit 1
-
 
 # Create bucket if it doesn't already exist
 echo "------------------------------------------------------------------------------"
@@ -64,28 +59,34 @@ fi
 echo "------------------------------------------------------------------------------"
 echo "Installing Python packages for AWS Lambda Layers"
 echo "------------------------------------------------------------------------------"
-pushd $LAYERS_DIR
-for layer in $LAYERS; do
-  echo "Installing packages for: $layer"
-  # ref docs: https://docs.aws.amazon.com/lambda/latest/dg/python-package.html#python-package-pycache
-  pip install \
-  --quiet \
-  --platform manylinux2014_x86_64 \
-  --target=package \
-  --implementation cp \
-  --python-version 3.10 \
-  --only-binary=:all: \
-  --no-compile \
-  --requirement ${layer}/requirements.txt \
-  --target=${layer}/python 2>&1 | \
-    grep -v "WARNING: Target directory"
-  echo "Done installing dependencies for $layer"
-done
-popd
+if [ -d "$LAYERS_DIR" ]; then
+  LAYERS=$(ls $LAYERS_DIR)
+  pushd $LAYERS_DIR
+  for layer in $LAYERS; do
+    echo "Installing packages for: $layer"
+    # ref docs: https://docs.aws.amazon.com/lambda/latest/dg/python-package.html#python-package-pycache
+    pip install \
+    --quiet \
+    --platform manylinux2014_x86_64 \
+    --target=package \
+    --implementation cp \
+    --python-version 3.10 \
+    --only-binary=:all: \
+    --no-compile \
+    --requirement ${layer}/requirements.txt \
+    --target=${layer}/python 2>&1 | \
+      grep -v "WARNING: Target directory"
+    echo "Done installing dependencies for $layer"
+  done
+  popd
+else
+  echo "Directory $LAYERS_DIR does not exist. Skipping"
+fi
 
 echo "------------------------------------------------------------------------------"
 echo "Packaging CloudFormation artifacts"
 echo "------------------------------------------------------------------------------"
+LAMBDAS=$(ls $LAMBDAS_DIR)
 for lambda in $LAMBDAS; do
   dir=$LAMBDAS_DIR/$lambda
   pushd $dir
@@ -95,7 +96,7 @@ for lambda in $LAMBDAS; do
   s3_template=s3://${BUCKET}/${PREFIX}/${template}
   https_template="https://s3.${region}.amazonaws.com/${BUCKET}/${PREFIX}/${template}"
   # avoid re-packaging source zips if only file timestamps have changed - per https://blog.revolve.team/2022/05/19/lambda-build-consistency/
-  sudo find $LAYERS_DIR -exec touch -a -m -t"202307230000.00" {} \;
+  [ -d "$LAYERS_DIR" ] && sudo find $LAYERS_DIR -exec touch -a -m -t"202307230000.00" {} \;
   sudo find ./src -exec touch -a -m -t"202307230000.00" {} \;
   aws cloudformation package \
   --template-file ./template.yml \
