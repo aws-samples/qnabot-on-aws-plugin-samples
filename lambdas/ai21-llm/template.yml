@@ -8,6 +8,14 @@ Parameters:
     Default: ''
     NoEcho: true
 
+  LLMModelId:
+    Type: String
+    Default: j2-jumbo-instruct
+    AllowedValues: # to update list of available models
+      - j2-jumbo-instruct
+      - j2-instruct
+    Description: AI21 LLM Model
+
 Resources:
   ApiKeySecret:
     Type: AWS::SecretsManager::Secret
@@ -54,6 +62,35 @@ Resources:
           API_KEY_SECRET_NAME: !Ref AWS::StackName
       Code: ./src
 
+  OutputSettingsFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+  
+  OutputSettingsFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: settings.lambda_handler
+      Role: !GetAtt 'OutputSettingsFunctionRole.Arn'
+      Runtime: python3.10
+      Timeout: 10
+      MemorySize: 128
+      Code: ./src
+
+  OutputSettings:
+    Type: Custom::OutputSettings
+    Properties:
+      ServiceToken: !GetAtt OutputSettingsFunction.Arn
+      ModelId: !Ref LLMModelId
+
 Outputs:
   APIKeySecret:
     Description: Link to Secrets Manager console to input API Key
@@ -62,3 +99,19 @@ Outputs:
   LLMLambdaArn:
     Description: Lambda function ARN (use for QnABot param "LLMLambdaArn")
     Value: !GetAtt LambdaFunction.Arn
+  
+  QnABotSettingGenerateQueryPromptTemplate:
+    Description: QnABot Designer Setting "LLM_GENERATE_QUERY_PROMPT_TEMPLATE"
+    Value: !GetAtt OutputSettings.LLM_GENERATE_QUERY_PROMPT_TEMPLATE
+
+  QnABotSettingGenerateQueryModelParams:
+    Description: QnABot Designer Setting "LLM_GENERATE_QUERY_MODEL_PARAMS"
+    Value: !GetAtt OutputSettings.LLM_GENERATE_QUERY_MODEL_PARAMS
+
+  QnABotSettingQAPromptTemplate:
+    Description: QnABot Designer Setting "LLM_QA_PROMPT_TEMPLATE"
+    Value: !GetAtt OutputSettings.LLM_QA_PROMPT_TEMPLATE
+
+  QnABotSettingQAModelParams:
+    Description: QnABot Designer Setting "LLM_QA_MODEL_PARAMS"
+    Value: !GetAtt OutputSettings.LLM_QA_MODEL_PARAMS
