@@ -8,13 +8,14 @@ Parameters:
     Default: ''
     NoEcho: true
 
-  LLMModelId:
+  LLMModelType:
     Type: String
-    Default: j2-jumbo-instruct
+    Default: mid
     AllowedValues: # to update list of available models
-      - j2-jumbo-instruct
-      - j2-instruct
-    Description: AI21 LLM Model
+      - light
+      - mid
+      - ultra
+    Description: AI21 LLM Model Type
 
 Resources:
   ApiKeySecret:
@@ -89,7 +90,7 @@ Resources:
     Type: Custom::OutputSettings
     Properties:
       ServiceToken: !GetAtt OutputSettingsFunction.Arn
-      ModelId: !Ref LLMModelId
+      ModelType: !Ref LLMModelType
 
 Outputs:
   APIKeySecret:

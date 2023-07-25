@@ -8,7 +8,7 @@ Parameters:
     Default: ''
     NoEcho: true
 
-  LLMModelId:
+  LLMModel:
     Type: String
     Default: claude-instant-1
     AllowedValues: # to update list of available models
@@ -89,7 +89,7 @@ Resources:
     Type: Custom::OutputSettings
     Properties:
       ServiceToken: !GetAtt OutputSettingsFunction.Arn
-      ModelId: !Ref LLMModelId
+      Model: !Ref LLMModel
 
 Outputs:
   APIKeySecret:
