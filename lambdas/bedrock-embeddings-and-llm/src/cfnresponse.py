@@ -35,3 +35,16 @@ def send(event, context, responseStatus, responseData, physicalResourceId=None, 
 
     print("Response body:")
     print(json_responseBody)
+
+    headers = {
+        'content-type' : '',
+        'content-length' : str(len(json_responseBody))
+    }
+
+    try:
+        response = http.request('PUT', responseUrl, headers=headers, body=json_responseBody)
+        print("Status code:", response.status)
+
+    except Exception as e:
+
+        print("send(..) failed executing http.request(..):", e)
