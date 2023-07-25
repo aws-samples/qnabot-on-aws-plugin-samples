@@ -3,6 +3,17 @@ Description: QnABot on AWS LLM Plugin for Anthropic - v0.1.0
 
 Parameters:
 
+  LLMModelId:
+    Type: String
+    Default: amazon.titan-tg1-large
+    AllowedValues:
+      - amazon.titan-tg1-large
+      - ai21.j2-grande-instruct
+      - ai21.j2-jumbo-instruct
+      - anthropic.claude-v1
+      - anthropic.claude-instant-v1
+    Description: Bedrock LLM ModelId (Bedrock preview access only)
+
   BedrockPreviewSdkUrl:
     Type: String
     Default: https://preview.documentation.bedrock.aws.dev/Documentation/SDK/bedrock-python-sdk.zip
@@ -221,6 +232,35 @@ Resources:
       MemorySize: 128
       Code: ./src
 
+  OutputSettingsFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+  
+  OutputSettingsFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: settings.lambda_handler
+      Role: !GetAtt 'OutputSettingsFunctionRole.Arn'
+      Runtime: python3.10
+      Timeout: 10
+      MemorySize: 128
+      Code: ./src
+
+  OutputSettings:
+    Type: Custom::OutputSettings
+    Properties:
+      ServiceToken: !GetAtt OutputSettingsFunction.Arn
+      ModelId: !Ref LLMModelId
+
 Outputs:
 
   BedrockBoto3Layer:
@@ -234,3 +274,19 @@ Outputs:
   LLMLambdaArn:
     Description: Lambda function for LLM (use for QnABot param "LLMLambdaArn")
     Value: !GetAtt LLMLambdaFunction.Arn
+
+  QnABotSettingGenerateQueryPromptTemplate:
+    Description: QnABot Designer Setting "LLM_GENERATE_QUERY_PROMPT_TEMPLATE"
+    Value: !GetAtt OutputSettings.LLM_GENERATE_QUERY_PROMPT_TEMPLATE
+
+  QnABotSettingGenerateQueryModelParams:
+    Description: QnABot Designer Setting "LLM_GENERATE_QUERY_MODEL_PARAMS"
+    Value: !GetAtt OutputSettings.LLM_GENERATE_QUERY_MODEL_PARAMS
+
+  QnABotSettingQAPromptTemplate:
+    Description: QnABot Designer Setting "LLM_QA_PROMPT_TEMPLATE"
+    Value: !GetAtt OutputSettings.LLM_QA_PROMPT_TEMPLATE
+
+  QnABotSettingQAModelParams:
+    Description: QnABot Designer Setting "LLM_QA_MODEL_PARAMS"
+    Value: !GetAtt OutputSettings.LLM_QA_MODEL_PARAMS
