@@ -10,11 +10,11 @@ Parameters:
 
   LLMModelType:
     Type: String
-    Default: mid
+    Default: j2-mid
     AllowedValues:
-      - light
-      - mid
-      - ultra
+      - j2-light
+      - j2-mid
+      - j2-ultra
     Description: AI21 LLM Model Type
 
 Resources:
