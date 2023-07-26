@@ -6,8 +6,8 @@ from botocore.exceptions import ClientError
 
 # Defaults
 API_KEY_SECRET_NAME = os.environ['API_KEY_SECRET_NAME']
-DEFAULT_MODEL_TYPE = os.environ.get("DEFAULT_MODEL_TYPE","mid") 
-ENDPOINT_URL = os.environ.get("ENDPOINT_URL", "https://api.ai21.com/studio/v1/j2-{MODEL_TYPE}/complete")
+DEFAULT_MODEL_TYPE = os.environ.get("DEFAULT_MODEL_TYPE","j2-mid") 
+ENDPOINT_URL = os.environ.get("ENDPOINT_URL", "https://api.ai21.com/studio/v1/{MODEL_TYPE}/complete")
 MAX_TOKENS = 256
 
 def get_secret(secret_name):
