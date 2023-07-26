@@ -114,3 +114,10 @@ When the QnABot Cloudformation stack status is CREATE_COMPLETE or UPDATE_COMPLET
       <img src="./images/settings-designer.png" alt="Settings" width="600">
 - In a new browser window, access the QnABot Client URL (You can find the URL in the **Outputs** tab of your QnABot CloudFormation stack `ClientURL`), and start interacting with the QnA bot!
 
+## Security
+
+See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
+
+## License
+
+This library is licensed under the MIT-0 License. See the LICENSE file.
