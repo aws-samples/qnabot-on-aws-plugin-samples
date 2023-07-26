@@ -1,6 +1,10 @@
-# QnABot Sample Plugins
+# QnABot on AWS Sample Plugins
 
-This repository provides sample LLM Lambda functions for use with QnABot, installable using CloudFormation.
+This repository provides sample plugin Lambda functions for use with the [QnABot on AWS](https://aws.amazon.com/solutions/implementations/qnabot-on-aws/) solution. 
+
+### Contents:
+
+*Plugins to extend QnABot LLM integration*  
 1. AI21 LLM: Uses AI21's Jurassic model API - requires an AI21 account with an API Key
 2. Anthropic LLM: Uses Anthropic's Claude model API - requires an Anthropic account with an API Key
 3. Amazon Bedrock Embeddings and LLM: Uses Amazon Bedrock service API (preview) - requires access to Amazon Bedrock service (currently in private preview)
