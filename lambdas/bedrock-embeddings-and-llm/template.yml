@@ -19,6 +19,7 @@ Parameters:
       - ai21.j2-jumbo-instruct
       - anthropic.claude-v1
       - anthropic.claude-instant-v1
+      - anthropic.claude-v2
     Description: Bedrock LLM ModelId (Bedrock preview access only)
 
   BedrockPreviewSdkUrl:
