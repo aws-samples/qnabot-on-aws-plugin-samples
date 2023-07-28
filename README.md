@@ -86,7 +86,7 @@ When your CloudFormation stack status is CREATE_COMPLETE, choose the **Outputs**
 - Copy the value for `LLMLambdaArn`
 - Deploy or update a QnABot CloudFormation stack, selecting **LLMApi** parameter as `LAMBDA`, and for **LLMLambdaArn** parameter enter the Lambda Arn copied above. 
 
-For more information, see [QnABot LLM README - Lambda Function](https://github.com/aws-solutions/qnabot-on-aws/blob/feature/llm-summarize-bedrock-falcon40B-kendrarag-kendraindexandcrawler/docs/LLM_Retrieval_and_generative_question_answering/README.md#3-lambda-function)  **TODO: Update link**
+For more information, see [QnABot LLM README - Lambda Function](https://github.com/aws-solutions/qnabot-on-aws/blob/main/docs/LLM_Retrieval_and_generative_question_answering/README.md#2-lambda-function) 
 
 ### (Optional) Configure QnABot to use your new Embeddings function *(currently only available for Bedrock)*
 
@@ -94,7 +94,7 @@ When your CloudFormation stack status is CREATE_COMPLETE, choose the **Outputs**
 - Copy the value for `EmbeddingsLambdaArn` 
 - Deploy or update a QnABot CloudFormation stack, selecting **EmbeddingsApi** as `LAMBDA`, and for **EmbeddingsLambdaArn** enter the Lambda Arn copied above. 
 
-For more information, see [QnABot Embeddings README - Lambda Function](https://github.com/aws-solutions/qnabot-on-aws/blob/feature/llm-summarize-bedrock-falcon40B-kendrarag-kendraindexandcrawler/docs/semantic_matching_using_LLM_embeddings/README.md#2-lambda-function)  **TODO: Update link**
+For more information, see [QnABot Embeddings README - Lambda Function](https://github.com/aws-solutions/qnabot-on-aws/tree/main/docs/semantic_matching_using_LLM_embeddings#3-lambda-function)
 
 
 ### Update QnABot Settings 
