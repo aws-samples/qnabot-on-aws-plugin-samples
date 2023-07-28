@@ -125,7 +125,7 @@ echo "--------------------------------------------------------------------------
 echo "Outputs"
 echo "------------------------------------------------------------------------------"
 for lambda in $LAMBDAS; do
-  stackname=QNABOT-$(echo $lambda | tr '[:lower:]' '[:upper:]' | tr '_' '-')
+  stackname=QNABOTPLUGIN-$(echo $lambda | tr '[:lower:]' '[:upper:]' | tr '_' '-')
   template="https://s3.${region}.amazonaws.com/${BUCKET}/${PREFIX}/${lambda}.yaml"
   echo $stackname
   echo "=============="
