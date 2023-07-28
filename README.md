@@ -60,12 +60,11 @@ Use AWS CloudFormation to deploy one or more of the sample plugin Lambdas in you
 *Note: Ensure that your IAM Role/User have permissions to create and manage the necessary resources and components for this application.*
 2. Choose one of the **Launch Stack** buttons below for your desired LLM and AWS region to open the AWS CloudFormation console and create a new stack. The CloudFormation tempalates are supported in the following regions:
 
-**TODO: Update links when published**
 Plugin | Region name | Region code | Launch
 --- | --- | --- | ---
-QNABOT-AI21-LLM | US East (N. Virginia) | us-east-1 | [![Launch Stack](https://cdn.rawgit.com/buildkite/cloudformation-launch-stack-button-svg/master/launch-stack.svg)](https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://s3.us-east-1.amazonaws.com/bobs-artifacts-bucket/qnabot-plugins/ai21-llm.yaml&stackName=QNABOT-AI21-LLM)
-QNABOT-ANTHROPIC-LLM | US East (N. Virginia) | us-east-1 | [![Launch Stack](https://cdn.rawgit.com/buildkite/cloudformation-launch-stack-button-svg/master/launch-stack.svg)](https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://s3.us-east-1.amazonaws.com/bobs-artifacts-bucket/qnabot-plugins/anthropic-llm.yaml&stackName=QNABOT-ANTHROPIC-LLM)
-QNABOT-BEDROCK-EMBEDDINGS-AND-LLM | US East (N. Virginia) | us-east-1 | [![Launch Stack](https://cdn.rawgit.com/buildkite/cloudformation-launch-stack-button-svg/master/launch-stack.svg)](https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://s3.us-east-1.amazonaws.com/bobs-artifacts-bucket/qnabot-plugins/bedrock-embeddings-and-llm.yaml&stackName=QNABOT-BEDROCK-EMBEDDINGS-AND-LLM)
+QNABOT-AI21-LLM | US East (N. Virginia) | us-east-1 | [![Launch Stack](https://cdn.rawgit.com/buildkite/cloudformation-launch-stack-button-svg/master/launch-stack.svg)](https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://s3.us-east-1.amazonaws.com/aws-ml-blog/artifacts/qnabot-on-aws-plugin-samples/ai21-llm.yaml&stackName=QNABOT-AI21-LLM)
+QNABOT-ANTHROPIC-LLM | US East (N. Virginia) | us-east-1 | [![Launch Stack](https://cdn.rawgit.com/buildkite/cloudformation-launch-stack-button-svg/master/launch-stack.svg)](https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://s3.us-east-1.amazonaws.com/aws-ml-blog/artifacts/qnabot-on-aws-plugin-samples/anthropic-llm.yaml&stackName=QNABOT-ANTHROPIC-LLM)
+QNABOT-BEDROCK-EMBEDDINGS-AND-LLM | US East (N. Virginia) | us-east-1 | [![Launch Stack](https://cdn.rawgit.com/buildkite/cloudformation-launch-stack-button-svg/master/launch-stack.svg)](https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://s3.us-east-1.amazonaws.com/aws-ml-blog/artifacts/qnabot-on-aws-plugin-samples/bedrock-embeddings-and-llm.yaml&stackName=QNABOT-BEDROCK-EMBEDDINGS-AND-LLM)
 
 3. On the CloudFormation `Create Stack` page, click `Next`
 4. Enter the following parameters:
@@ -87,7 +86,7 @@ When your CloudFormation stack status is CREATE_COMPLETE, choose the **Outputs**
 - Copy the value for `LLMLambdaArn`
 - Deploy or update a QnABot CloudFormation stack, selecting **LLMApi** parameter as `LAMBDA`, and for **LLMLambdaArn** parameter enter the Lambda Arn copied above. 
 
-For more information, see [QnABot LLM README - Lambda Function](https://github.com/aws-solutions/qnabot-on-aws/blob/feature/llm-summarize-bedrock-falcon40B-kendrarag-kendraindexandcrawler/docs/LLM_Retrieval_and_generative_question_answering/README.md#3-lambda-function)  **TODO: Update link**
+For more information, see [QnABot LLM README - Lambda Function](https://github.com/aws-solutions/qnabot-on-aws/blob/main/docs/LLM_Retrieval_and_generative_question_answering/README.md#2-lambda-function) 
 
 ### (Optional) Configure QnABot to use your new Embeddings function *(currently only available for Bedrock)*
 
@@ -95,7 +94,7 @@ When your CloudFormation stack status is CREATE_COMPLETE, choose the **Outputs**
 - Copy the value for `EmbeddingsLambdaArn` 
 - Deploy or update a QnABot CloudFormation stack, selecting **EmbeddingsApi** as `LAMBDA`, and for **EmbeddingsLambdaArn** enter the Lambda Arn copied above. 
 
-For more information, see [QnABot Embeddings README - Lambda Function](https://github.com/aws-solutions/qnabot-on-aws/blob/feature/llm-summarize-bedrock-falcon40B-kendrarag-kendraindexandcrawler/docs/semantic_matching_using_LLM_embeddings/README.md#2-lambda-function)  **TODO: Update link**
+For more information, see [QnABot Embeddings README - Lambda Function](https://github.com/aws-solutions/qnabot-on-aws/tree/main/docs/semantic_matching_using_LLM_embeddings#3-lambda-function)
 
 
 ### Update QnABot Settings 
