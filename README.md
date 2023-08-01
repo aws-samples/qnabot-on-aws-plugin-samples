@@ -1,6 +1,8 @@
 # QnABot on AWS Sample Plugins
  
-This repository provides sample plugin Lambda functions for use with the [QnABot on AWS](https://aws.amazon.com/solutions/implementations/qnabot-on-aws/) solution. If you want to use this plugin for a new QnAbot deployment then you have to use the  standard QnAbot template from QnABot launching page (https://aws.amazon.com/solutions/implementations/qnabot-on-aws/) and update the output Lambda Arn which is copied from the below steps.
+This repository provides sample plugin Lambda functions for use with the [QnABot on AWS](https://aws.amazon.com/solutions/implementations/qnabot-on-aws/) solution. 
+
+The directions below explain how to build and deploy the plugins. For more information on the QnABot solution itself, see the [QnABot on AWS Solution Implementation Guide](https://docs.aws.amazon.com/solutions/latest/qnabot-on-aws/solution-overview.html).
 
 ### Contents:
 
@@ -36,23 +38,23 @@ When completed, it displays the CloudFormation templates S3 URLs and 1-click URL
 ------------------------------------------------------------------------------
 Outputs
 ------------------------------------------------------------------------------
-QNABOT-AI21-LLM
+QNABOTPLUGIN-AI21-LLM
 ==============
  - Template URL: https://s3.us-east-1.amazonaws.com/xxxxx-cfn-bucket/qnabot-plugins/ai21-llm.yaml
  - Deploy URL:   https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://s3.us-east-1.amazonaws.com/xxxxx-cfn-bucket/qnabot-plugins/ai21-llm.yaml&stackName=QNABOTPLUGIN-AI21-LLM
 
-QNABOT-ANTHROPIC-LLM
+QNABOTPLUGIN-ANTHROPIC-LLM
 ==============
  - Template URL: https://s3.us-east-1.amazonaws.com/xxxxx-cfn-bucket/qnabot-plugins/anthropic-llm.yaml
  - Deploy URL:   https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://s3.us-east-1.amazonaws.com/xxxxx-cfn-bucket/qnabot-plugins/anthropic-llm.yaml&stackName=QNABOTPLUGIN-ANTHROPIC-LLM
 
-QNABOT-BEDROCK-EMBEDDINGS-LLM
+QNABOTPLUGIN-BEDROCK-EMBEDDINGS-LLM
 ==============
  - Template URL: https://s3.us-east-1.amazonaws.com/xxxxx-cfn-bucket/qnabot-plugins/bedrock-embeddings-llm.yaml
  - Deploy URL:   https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://s3.us-east-1.amazonaws.com/xxxxx-cfn-bucket/qnabot-plugins/bedrock-embeddings-llm.yaml&stackName=QNABOTPLUGIN-BEDROCK-EMBEDDINGS-LLM
 ```
 
-### Deploy a new stack
+### Deploy a new Plugin stack
 
 Use AWS CloudFormation to deploy one or more of the sample plugin Lambdas in your own AWS account (if you do not have an AWS account, please see [How do I create and activate a new Amazon Web Services account?](https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/)):
 
@@ -73,13 +75,13 @@ QNABOT-BEDROCK-EMBEDDINGS-AND-LLM | US East (N. Virginia) | us-east-1 | [![Launc
     3. `LLMModelId` and `EmbeddingsModelId` (for Bedrock), `LLMModel` (for Anthropic), `LLMModelType` (for AI21): Choose one of the available models to be used depending on the model provider.
 
 
-## Post-Deployment
+## After your Plugin stack is deployed
 
-### Configure QnABot to use your new LLM function
+### Configure a new or existing QnABot stack deployment to use your new LLM Plugin function
 
 When your CloudFormation stack status is CREATE_COMPLETE, choose the **Outputs** tab
 - Copy the value for `LLMLambdaArn`
-- Deploy or update a QnABot CloudFormation stack, selecting **LLMApi** parameter as `LAMBDA`, and for **LLMLambdaArn** parameter enter the Lambda Arn copied above. 
+- Deploy a new QnABot Stack ([instructions](https://docs.aws.amazon.com/solutions/latest/qnabot-on-aws/step-1-launch-the-stack.html)) or Update an existing QnABot stack ([instructions](https://docs.aws.amazon.com/solutions/latest/qnabot-on-aws/update-the-solution.html)), selecting **LLMApi** parameter as `LAMBDA`, and for **LLMLambdaArn** parameter enter the Lambda Arn copied above. 
 
 For more information, see [QnABot LLM README - Lambda Function](https://github.com/aws-solutions/qnabot-on-aws/blob/main/docs/LLM_Retrieval_and_generative_question_answering/README.md#2-lambda-function) 
 
@@ -108,7 +110,7 @@ When the QnABot Cloudformation stack status is CREATE_COMPLETE or UPDATE_COMPLET
 
 When your CloudFormation stack status is **CREATE_COMPLETE**, choose the **Outputs** tab
 - Copy the value for `EmbeddingsLambdaArn` 
-- Deploy or update a QnABot CloudFormation stack, selecting **EmbeddingsApi** as `LAMBDA`, and for **EmbeddingsLambdaArn** enter the Lambda Arn copied above. 
+- Deploy a new QnABot Stack ([instructions](https://docs.aws.amazon.com/solutions/latest/qnabot-on-aws/step-1-launch-the-stack.html)) or Update an existing QnABot stack ([instructions](https://docs.aws.amazon.com/solutions/latest/qnabot-on-aws/update-the-solution.html)), selecting **EmbeddingsApi** as `LAMBDA`, and for **EmbeddingsLambdaArn** enter the Lambda Arn copied above. 
 
 For more information, see [QnABot Embeddings README - Lambda Function](https://github.com/aws-solutions/qnabot-on-aws/tree/main/docs/semantic_matching_using_LLM_embeddings#3-lambda-function)
 
