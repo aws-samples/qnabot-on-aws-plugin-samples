@@ -106,7 +106,7 @@ When the QnABot Cloudformation stack status is CREATE_COMPLETE or UPDATE_COMPLET
 
 ### (Optional) Configure QnABot to use your new Embeddings function *(currently only available for Bedrock)*
 
-When your CloudFormation stack status is CREATE_COMPLETE, choose the **Outputs** tab
+When your CloudFormation stack status is **CREATE_COMPLETE**, choose the **Outputs** tab
 - Copy the value for `EmbeddingsLambdaArn` 
 - Deploy or update a QnABot CloudFormation stack, selecting **EmbeddingsApi** as `LAMBDA`, and for **EmbeddingsLambdaArn** enter the Lambda Arn copied above. 
 
@@ -116,9 +116,10 @@ For more information, see [QnABot Embeddings README - Lambda Function](https://g
 
 The default region and endpoint URL are set based on the CloudFormation deployed region and the default third-party LLM provider/Bedrock endpoint URL. To override the endpoint URL:
 
-- Once your CloudFormation stack status shows CREATE_COMPLETE, go to the Outputs tab and copy the Lambda Function Name [refer to green highlighted field above].
+- Once your CloudFormation stack status shows **CREATE_COMPLETE**, go to the Outputs tab and copy the Lambda Function Name [refer to green highlighted field above].
 - In Lambda Functions, search for the Function Name.
-- Go to the Configuration tab, edit Environment Variables, and add "AWS_REGION" to specify a new region and "ENDPOINT_URL" to override the endpoint URL.
+- Go to the Configuration tab, edit Environment Variables, add **ENDPOINT_URL** to override the endpoint URL.
+- For Bedrock, you can add **AWS_REGION** to override the AWS region.
 
 ### (Optional) Modify Third Party API Keys in Secrets Manager
 
