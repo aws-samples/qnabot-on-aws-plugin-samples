@@ -1,6 +1,6 @@
 # QnABot on AWS Sample Plugins
-
-This repository provides sample plugin Lambda functions for use with the [QnABot on AWS](https://aws.amazon.com/solutions/implementations/qnabot-on-aws/) solution. 
+ 
+This repository provides sample plugin Lambda functions for use with the [QnABot on AWS](https://aws.amazon.com/solutions/implementations/qnabot-on-aws/) solution. If you want to use this plugin for a new QnAbot deployment then you have to use the  standard QnAbot template from QnABot launching page (https://aws.amazon.com/solutions/implementations/qnabot-on-aws/) and update the output Lambda Arn which is copied from the below steps.
 
 ### Contents:
 
