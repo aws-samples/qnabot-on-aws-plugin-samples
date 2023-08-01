@@ -75,11 +75,6 @@ QNABOT-BEDROCK-EMBEDDINGS-AND-LLM | US East (N. Virginia) | us-east-1 | [![Launc
 
 ## Post-Deployment
 
-### (Optional) Modify Third Party API Keys in Secrets Manager
-
-When your CloudFormation stack status is CREATE_COMPLETE, choose the **Outputs** tab. Use the link for `APIKeySecret` to open AWS Secrets Manager to inspect or edit your API Key in `Secret value`.
-
-
 ### Configure QnABot to use your new LLM function
 
 When your CloudFormation stack status is CREATE_COMPLETE, choose the **Outputs** tab
@@ -87,14 +82,6 @@ When your CloudFormation stack status is CREATE_COMPLETE, choose the **Outputs**
 - Deploy or update a QnABot CloudFormation stack, selecting **LLMApi** parameter as `LAMBDA`, and for **LLMLambdaArn** parameter enter the Lambda Arn copied above. 
 
 For more information, see [QnABot LLM README - Lambda Function](https://github.com/aws-solutions/qnabot-on-aws/blob/main/docs/LLM_Retrieval_and_generative_question_answering/README.md#2-lambda-function) 
-
-### (Optional) Configure QnABot to use your new Embeddings function *(currently only available for Bedrock)*
-
-When your CloudFormation stack status is CREATE_COMPLETE, choose the **Outputs** tab
-- Copy the value for `EmbeddingsLambdaArn` 
-- Deploy or update a QnABot CloudFormation stack, selecting **EmbeddingsApi** as `LAMBDA`, and for **EmbeddingsLambdaArn** enter the Lambda Arn copied above. 
-
-For more information, see [QnABot Embeddings README - Lambda Function](https://github.com/aws-solutions/qnabot-on-aws/tree/main/docs/semantic_matching_using_LLM_embeddings#3-lambda-function)
 
 
 ### Update QnABot Settings 
@@ -116,6 +103,26 @@ When the QnABot Cloudformation stack status is CREATE_COMPLETE or UPDATE_COMPLET
 
       <img src="./images/settings-designer.png" alt="Settings" width="600">
 - In a new browser window, access the QnABot Client URL (You can find the URL in the **Outputs** tab of your QnABot CloudFormation stack `ClientURL`), and start interacting with the QnA bot!
+
+### (Optional) Configure QnABot to use your new Embeddings function *(currently only available for Bedrock)*
+
+When your CloudFormation stack status is CREATE_COMPLETE, choose the **Outputs** tab
+- Copy the value for `EmbeddingsLambdaArn` 
+- Deploy or update a QnABot CloudFormation stack, selecting **EmbeddingsApi** as `LAMBDA`, and for **EmbeddingsLambdaArn** enter the Lambda Arn copied above. 
+
+For more information, see [QnABot Embeddings README - Lambda Function](https://github.com/aws-solutions/qnabot-on-aws/tree/main/docs/semantic_matching_using_LLM_embeddings#3-lambda-function)
+
+### (Optional) Modify Region and Endpoint URL
+
+The default region and endpoint URL are set based on the CloudFormation deployed region and the default third-party LLM provider/Bedrock endpoint URL. To override the endpoint URL:
+
+- Once your CloudFormation stack status shows CREATE_COMPLETE, go to the Outputs tab and copy the Lambda Function Name [refer to green highlighted field above].
+- In Lambda Functions, search for the Function Name.
+- Go to the Configuration tab, edit Environment Variables, and add "AWS_REGION" to specify a new region and "ENDPOINT_URL" to override the endpoint URL.
+
+### (Optional) Modify Third Party API Keys in Secrets Manager
+
+When your CloudFormation stack status is CREATE_COMPLETE, choose the **Outputs** tab. Use the link for `APIKeySecret` to open AWS Secrets Manager to inspect or edit your API Key in `Secret value`.
 
 ## Security
 
