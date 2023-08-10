@@ -58,7 +58,7 @@ Example Test Event:
 {
   "prompt": "Why is the sky blue?\nAssistant:",
   "parameters": {
-    "model_type": "mid",
+    "model_type": "j2-mid",
     "temperature": 0
   }
 }
