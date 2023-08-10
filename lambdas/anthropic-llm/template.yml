@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: QnABot on AWS LLM Plugin for Anthropic - v0.1.0
+Description: QnABot on AWS LLM Plugin for Anthropic - v0.1.2
    
 Parameters:
   APIKey:
