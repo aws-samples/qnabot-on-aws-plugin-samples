@@ -31,6 +31,18 @@ Resources:
 
   BedrockBoto3Bucket:
     Type: AWS::S3::Bucket
+    Properties:
+      BucketEncryption:
+        ServerSideEncryptionConfiguration: 
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W51
+            reason: Bucket is to store boto3 package and does not contain any sensitive information.
+          - id: W35
+            reason: Bucket is to store boto3 package and does not contain any sensitive information.
 
   BedrockBoto3ZipFunctionRole:
     Type: AWS::IAM::Role
@@ -173,6 +185,13 @@ Resources:
               status = cfnresponse.FAILED
               reason = f"Exception thrown: {e}"
             cfnresponse.send(event, context, status, responseData, reason=reason)
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W89
+            reason: Lambda function is not communicating with any VPC resources.
+          - id: W92
+            reason: No requirements to set reserved concurrencies, function will not be invoked simultaneously.
       
   BedrockBoto3Zip:
     Type: Custom::BedrockBoto3Zip
@@ -209,8 +228,10 @@ Resources:
             Statement:
               - Effect: Allow
                 Action:
-                  - "bedrock:*"
-                Resource: "*"
+                  - "bedrock:InvokeModel"
+                Resource:
+                  - !Sub "arn:${AWS::Partition}:bedrock:*::foundation-model/*"
+                  - !Sub "arn:${AWS::Partition}:bedrock:*:${AWS::AccountId}:custom-model/*"
           PolicyName: BedrockPolicy
 
   EmbeddingsLambdaFunction:
@@ -228,6 +249,13 @@ Resources:
           DEFAULT_MODEL_ID: !Ref EmbeddingsModelId
           EMBEDDING_MAX_WORDS: 300 
       Code: ./src
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W89
+            reason: Lambda function is not communicating with any VPC resources.
+          - id: W92
+            reason: No requirements to set reserved concurrencies, function will not be invoked simultaneously.
 
   LLMLambdaFunction:
     Type: AWS::Lambda::Function
@@ -240,6 +268,13 @@ Resources:
       Timeout: 60
       MemorySize: 128
       Code: ./src
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W89
+            reason: Lambda function is not communicating with any VPC resources.
+          - id: W92
+            reason: No requirements to set reserved concurrencies, function will not be invoked simultaneously.
 
   OutputSettingsFunctionRole:
     Type: AWS::IAM::Role
@@ -263,6 +298,13 @@ Resources:
       Timeout: 10
       MemorySize: 128
       Code: ./src
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W89
+            reason: Lambda function is not communicating with any VPC resources.
+          - id: W92
+            reason: No requirements to set reserved concurrencies, function will not be invoked simultaneously.
 
   OutputSettings:
     Type: Custom::OutputSettings

@@ -24,6 +24,11 @@ Resources:
       Description: API Key
       Name: !Ref AWS::StackName
       SecretString: !Ref APIKey
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W77
+            reason: No requirement for custom CMK, secret will not be shared cross-account.
 
   LambdaFunctionRole:
     Type: AWS::IAM::Role
@@ -62,6 +67,13 @@ Resources:
         Variables:
           API_KEY_SECRET_NAME: !Ref AWS::StackName
       Code: ./src
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W89
+            reason: Lambda function is not communicating with any VPC resources.
+          - id: W92
+            reason: No requirements to set reserved concurrencies, function will not be invoked simultaneously.
 
   OutputSettingsFunctionRole:
     Type: AWS::IAM::Role
@@ -85,6 +97,14 @@ Resources:
       Timeout: 10
       MemorySize: 128
       Code: ./src
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W89
+            reason: Lambda function is not communicating with any VPC resources.
+          - id: W92
+            reason: No requirements to set reserved concurrencies, function will not be invoked simultaneously.
+
 
   OutputSettings:
     Type: Custom::OutputSettings
