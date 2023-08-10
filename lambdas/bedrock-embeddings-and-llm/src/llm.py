@@ -4,7 +4,7 @@ import os
 
 # Defaults
 DEFAULT_MODEL_ID = os.environ.get("DEFAULT_MODEL_ID","amazon.titan-tg1-large")
-AWS_REGION = os.environ["AWS_REGION"]
+AWS_REGION = os.environ["AWS_REGION_OVERRIDE"] if "AWS_REGION_OVERRIDE" in os.environ else os.environ["AWS_REGION"]
 ENDPOINT_URL = os.environ.get("ENDPOINT_URL", f'https://bedrock.{AWS_REGION}.amazonaws.com')
 DEFAULT_MAX_TOKENS = 256
 
