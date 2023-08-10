@@ -116,12 +116,11 @@ For more information, see [QnABot Embeddings README - Lambda Function](https://g
 
 ### (Optional) Modify Region and Endpoint URL
 
-The default region and endpoint URL are set based on the CloudFormation deployed region and the default third-party LLM provider/Bedrock endpoint URL. To override the endpoint URL:
+The default AWS region and endpoint URL are set based on the CloudFormation deployed region and the default third-party LLM provider/Bedrock endpoint URL. To override the endpoint URL:
 
 - Once your CloudFormation stack status shows **CREATE_COMPLETE**, go to the Outputs tab and copy the Lambda Function Name [refer to green highlighted field above].
 - In Lambda Functions, search for the Function Name.
 - Go to the Configuration tab, edit Environment Variables, add **ENDPOINT_URL** to override the endpoint URL.
-- For Bedrock, you can add **AWS_REGION** to override the AWS region.
 
 ### (Optional) Modify Third Party API Keys in Secrets Manager
 
