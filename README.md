@@ -18,7 +18,12 @@ _Note: Perform this step only if you want to create deployment artifacts in your
 
 *Pre-requisite*: You must already have the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html) installed and configured. You can use an AWS Cloud9 environment.
 
-Use the [publish.sh](./publish.sh) bash script to build the project and deploy CloudFormation templates to your own deployment bucket.
+Copy the plugins GitHub repo to your local machine.  
+Either:  
+ - use the `git` command: `git clone https://github.com/aws-samples/qnabot-on-aws-plugin-samples.git`
+ - OR, download and expand the ZIP file from the GitHub page: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/archive/refs/heads/main.zip
+
+Then use the [publish.sh](./publish.sh) bash script in the project root directory to build the project and deploy CloudFormation templates to your own deployment bucket.
 
 Run the script with up to 3 parameters:
 ```
