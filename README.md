@@ -10,6 +10,7 @@ The directions below explain how to build and deploy the plugins. For more infor
 1. AI21 LLM: Uses AI21's Jurassic model API - requires an AI21 account with an API Key
 2. Anthropic LLM: Uses Anthropic's Claude model API - requires an Anthropic account with an API Key
 3. Amazon Bedrock Embeddings and LLM: Uses Amazon Bedrock service API (preview) - requires access to Amazon Bedrock service (currently in private preview)
+4. Llama 2 13b Chat LLM: Uses Llama 2 13b Chat model - requires Llama-2-chat model to be deployed via SageMaker JumpStart. 
 
 
 ### (optional) Build and Publish QnABot Plugins CloudFormation artifacts
@@ -57,6 +58,11 @@ QNABOTPLUGIN-BEDROCK-EMBEDDINGS-LLM
 ==============
  - Template URL: https://s3.us-east-1.amazonaws.com/xxxxx-cfn-bucket/qnabot-plugins/bedrock-embeddings-llm.yaml
  - Deploy URL:   https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://s3.us-east-1.amazonaws.com/xxxxx-cfn-bucket/qnabot-plugins/bedrock-embeddings-llm.yaml&stackName=QNABOTPLUGIN-BEDROCK-EMBEDDINGS-LLM
+
+QNABOTPLUGIN-LLAMA-2-13B-CHAT-LLM
+==============
+ - Template URL: https://s3.us-east-1.amazonaws.com/xxxxx-cfn-bucket/qnabot-plugins/llama-2-13b-chat-llm.yaml
+ - Deploy URL:   https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://s3.us-east-1.amazonaws.com/xxxxx-cfn-bucket/qnabot-plugins/llama-2-13b-chat-llm.yaml&stackName=QNABOTPLUGIN-LLAMA-2-13B-CHAT-LLM
 ```
 
 ### Deploy a new Plugin stack

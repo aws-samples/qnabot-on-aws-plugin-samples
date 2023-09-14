@@ -1,0 +1,112 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: QnABot on AWS LLM Plugin for Llama-2-13b-chat
+
+Parameters:
+
+  LLMModel:
+    Type: String
+    Default: jumpstart-dft-meta-textgeneration-llama-2-13b-f
+    AllowedValues:
+      - jumpstart-dft-meta-textgeneration-llama-2-13b-f
+    Description: Llama 2 13b Chat LLM Model
+
+Resources:
+  LambdaFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "sagemaker:InvokeEndpoint"
+                Resource:
+                  - "*"
+          PolicyName: SageMakerPolicy
+
+  LambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: "llm.lambda_handler"
+      Role: !GetAtt 'LambdaFunctionRole.Arn'
+      MemorySize: 128
+      Timeout: 60
+      Runtime: python3.10       
+      Environment:
+        Variables:
+          ENDPOINT_NAME: !Ref LLMModel
+      Code: ./src
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W89
+            reason: Lambda function is not communicating with any VPC resources.
+          - id: W92
+            reason: No requirements to set reserved concurrencies, function will not be invoked simultaneously.
+
+  OutputSettingsFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+  
+  OutputSettingsFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: settings.lambda_handler
+      Role: !GetAtt 'OutputSettingsFunctionRole.Arn'
+      Runtime: python3.10
+      Timeout: 10
+      MemorySize: 128
+      Code: ./src
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W89
+            reason: Lambda function is not communicating with any VPC resources.
+          - id: W92
+            reason: No requirements to set reserved concurrencies, function will not be invoked simultaneously.
+
+  OutputSettings:
+    Type: Custom::OutputSettings
+    Properties:
+      ServiceToken: !GetAtt OutputSettingsFunction.Arn
+      Model: !Ref LLMModel
+
+Outputs:
+  LLMLambdaArn:
+    Description: Lambda function ARN (use for QnABot param "LLMLambdaArn")
+    Value: !GetAtt LambdaFunction.Arn
+
+  QnABotSettingGenerateQueryPromptTemplate:
+    Description: QnABot Designer Setting "LLM_GENERATE_QUERY_PROMPT_TEMPLATE"
+    Value: !GetAtt OutputSettings.LLM_GENERATE_QUERY_PROMPT_TEMPLATE
+
+  QnABotSettingGenerateQueryModelParams:
+    Description: QnABot Designer Setting "LLM_GENERATE_QUERY_MODEL_PARAMS"
+    Value: !GetAtt OutputSettings.LLM_GENERATE_QUERY_MODEL_PARAMS
+
+  QnABotSettingQAPromptTemplate:
+    Description: QnABot Designer Setting "LLM_QA_PROMPT_TEMPLATE"
+    Value: !GetAtt OutputSettings.LLM_QA_PROMPT_TEMPLATE
+
+  QnABotSettingQAModelParams:
+    Description: QnABot Designer Setting "LLM_QA_MODEL_PARAMS"
+    Value: !GetAtt OutputSettings.LLM_QA_MODEL_PARAMS
