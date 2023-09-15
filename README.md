@@ -10,7 +10,7 @@ The directions below explain how to build and deploy the plugins. For more infor
 1. AI21 LLM: Uses AI21's Jurassic model API - requires an AI21 account with an API Key
 2. Anthropic LLM: Uses Anthropic's Claude model API - requires an Anthropic account with an API Key
 3. Amazon Bedrock Embeddings and LLM: Uses Amazon Bedrock service API (preview) - requires access to Amazon Bedrock service (currently in private preview)
-4. Llama 2 13b Chat LLM: Uses Llama 2 13b Chat model - requires Llama-2-chat model to be deployed via SageMaker JumpStart. 
+4. Llama 2 13b Chat LLM: Uses Llama 2 13b Chat model - requires Llama-2-chat model to be deployed via SageMaker JumpStart. Refer to [Llama 2 foundation models from Meta are now available in Amazon SageMaker JumpStart](https://aws.amazon.com/blogs/machine-learning/llama-2-foundation-models-from-meta-are-now-available-in-amazon-sagemaker-jumpstart/) on how to deploy the Llama-2-chat model in SageMaker JumpStart. 
 
 
 ### (optional) Build and Publish QnABot Plugins CloudFormation artifacts

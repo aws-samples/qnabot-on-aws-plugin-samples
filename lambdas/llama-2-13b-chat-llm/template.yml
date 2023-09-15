@@ -1,14 +1,16 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: QnABot on AWS LLM Plugin for Llama-2-13b-chat
+Description: QnABot on AWS LLM Plugin for Llama-2-13b-chat model deployed using SageMaker JumpStart (https://aws.amazon.com/blogs/machine-learning/llama-2-foundation-models-from-meta-are-now-available-in-amazon-sagemaker-jumpstart/)
 
 Parameters:
-
-  LLMModel:
+  SageMakerEndpointName:
     Type: String
-    Default: jumpstart-dft-meta-textgeneration-llama-2-13b-f
-    AllowedValues:
-      - jumpstart-dft-meta-textgeneration-llama-2-13b-f
-    Description: Llama 2 13b Chat LLM Model
+    Description: Get the SageMaker Endpoint Name for Llama 2 13b Chat LLM Model from Amazon SageMaker console > Choose Inference in the left panel > Choose Endpoints. Refer to [Llama 2 foundation models from Meta are now available in Amazon SageMaker JumpStart](https://aws.amazon.com/blogs/machine-learning/llama-2-foundation-models-from-meta-are-now-available-in-amazon-sagemaker-jumpstart/) on how to deploy the Llama-2-chat model in SageMaker JumpStart. 
+    Default: 'jumpstart-dft-meta-textgeneration-llama-2-13b-f'
+
+  SageMakerEndpointArn:
+    Type: String
+    Description: Get the SageMaker Endpoint ARN for Llama 2 13b Chat LLM Model from Amazon SageMaker console > Choose Inference in the left panel > Choose Endpoints. Refer to [Llama 2 foundation models from Meta are now available in Amazon SageMaker JumpStart](https://aws.amazon.com/blogs/machine-learning/llama-2-foundation-models-from-meta-are-now-available-in-amazon-sagemaker-jumpstart/) on how to deploy the Llama-2-chat model in SageMaker JumpStart. 
+    Default: ''
 
 Resources:
   LambdaFunctionRole:
@@ -31,7 +33,7 @@ Resources:
                 Action:
                   - "sagemaker:InvokeEndpoint"
                 Resource:
-                  - "*"
+                  - !Ref SageMakerEndpointArn
           PolicyName: SageMakerPolicy
 
   LambdaFunction:
@@ -44,7 +46,7 @@ Resources:
       Runtime: python3.10       
       Environment:
         Variables:
-          ENDPOINT_NAME: !Ref LLMModel
+          SAGEMAKER_ENDPOINT_NAME: !Ref SageMakerEndpointName
       Code: ./src
     Metadata:
       cfn_nag:
@@ -88,7 +90,7 @@ Resources:
     Type: Custom::OutputSettings
     Properties:
       ServiceToken: !GetAtt OutputSettingsFunction.Arn
-      Model: !Ref LLMModel
+      Model: !Ref SageMakerEndpointName
 
 Outputs:
   LLMLambdaArn:
