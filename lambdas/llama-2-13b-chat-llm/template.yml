@@ -7,11 +7,6 @@ Parameters:
     Description: Get the SageMaker Endpoint Name for Llama 2 13b Chat LLM Model from Amazon SageMaker console > Choose Inference in the left panel > Choose Endpoints. Refer to this link on how to deploy the Llama-2-chat model in SageMaker JumpStart - https://aws.amazon.com/blogs/machine-learning/llama-2-foundation-models-from-meta-are-now-available-in-amazon-sagemaker-jumpstart/
     Default: 'jumpstart-dft-meta-textgeneration-llama-2-13b-f'
 
-  SageMakerEndpointArn:
-    Type: String
-    Description: Get the SageMaker Endpoint ARN for Llama 2 13b Chat LLM Model from Amazon SageMaker console > Choose Inference in the left panel > Choose Endpoints. Refer to this link on how to deploy the Llama-2-chat model in SageMaker JumpStart - https://aws.amazon.com/blogs/machine-learning/llama-2-foundation-models-from-meta-are-now-available-in-amazon-sagemaker-jumpstart/
-    Default: ''
-
 Resources:
   LambdaFunctionRole:
     Type: AWS::IAM::Role
@@ -33,7 +28,7 @@ Resources:
                 Action:
                   - "sagemaker:InvokeEndpoint"
                 Resource:
-                  - !Ref SageMakerEndpointArn
+                  - !Sub arn:${AWS::Partition}:sagemaker:${AWS::Region}:${AWS::AccountId}:endpoint/${SageMakerEndpointName}
           PolicyName: SageMakerPolicy
 
   LambdaFunction:
