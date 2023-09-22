@@ -13,11 +13,13 @@ def getModelSettings(modelType):
         "minTokens": 0,
         "topP": 1
     }
+    lambdahook_args = {"Prefix":"LLM Answer:", "Model_params": params}
     settings = {
         'LLM_GENERATE_QUERY_MODEL_PARAMS': json.dumps(params),
         'LLM_QA_MODEL_PARAMS': json.dumps(params),
         'LLM_GENERATE_QUERY_PROMPT_TEMPLATE': AI21_GENERATE_QUERY_PROMPT_TEMPLATE,
-        'LLM_QA_PROMPT_TEMPLATE': AI21_QA_PROMPT_TEMPLATE
+        'LLM_QA_PROMPT_TEMPLATE': AI21_QA_PROMPT_TEMPLATE,
+        'QNAITEM_LAMBDAHOOK_ARGS': json.dumps(lambdahook_args)
     }
     
     return settings
