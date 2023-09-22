@@ -144,6 +144,10 @@ Optionally configure QnAbot to prompt the LLM directly by configuring the LLM Pl
 
 When your Plugin CloudFormation stack status is CREATE_COMPLETE, choose the **Outputs** tab. Look for the outputs `QnAItemLambdaHookFunctionName` and `QnAItemLambdaHookArgs`. Use these values in the LambdaHook section of your no_hits item. You can change the value of "Prefix', or use "None" if you don't want to prefix the LLM answer.
 
+<img src="./images/qnaitem_lambdahook.png" alt="LambdaHook" width="600">  
+  
+<img src="./images/qnaitem_lambdahook_example.png" alt="LambdaHook" width="600">
+
 
 ## Security
 
