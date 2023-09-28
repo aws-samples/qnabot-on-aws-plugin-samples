@@ -96,8 +96,8 @@ for lambda in $LAMBDAS; do
   s3_template=s3://${BUCKET}/${PREFIX}/${template}
   https_template="https://s3.${region}.amazonaws.com/${BUCKET}/${PREFIX}/${template}"
   # avoid re-packaging source zips if only file timestamps have changed - per https://blog.revolve.team/2022/05/19/lambda-build-consistency/
-  [ -d "$LAYERS_DIR" ] && sudo find $LAYERS_DIR -exec touch -a -m -t"202307230000.00" {} \;
-  sudo find ./src -exec touch -a -m -t"202307230000.00" {} \;
+  [ -d "$LAYERS_DIR" ] && find $LAYERS_DIR -exec touch -a -m -t"202307230000.00" {} \;
+  find ./src -exec touch -a -m -t"202307230000.00" {} \;
   aws cloudformation package \
   --template-file ./template.yml \
   --output-template-file ./out/${template} \
