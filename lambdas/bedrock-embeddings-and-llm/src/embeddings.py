@@ -3,10 +3,10 @@ import json
 import os
 
 # Defaults
-DEFAULT_MODEL_ID = os.environ.get("DEFAULT_MODEL_ID","amazon.titan-e1t-medium")
+DEFAULT_MODEL_ID = os.environ.get("DEFAULT_MODEL_ID","amazon.titan-embed-text-v1")
 AWS_REGION = os.environ["AWS_REGION_OVERRIDE"] if "AWS_REGION_OVERRIDE" in os.environ else os.environ["AWS_REGION"]
-ENDPOINT_URL = os.environ.get("ENDPOINT_URL", f'https://bedrock.{AWS_REGION}.amazonaws.com')
-EMBEDDING_MAX_WORDS = os.environ.get("EMBEDDING_MAX_WORDS") or 300
+ENDPOINT_URL = os.environ.get("ENDPOINT_URL", f'https://bedrock-runtime.{AWS_REGION}.amazonaws.com')
+EMBEDDING_MAX_WORDS = os.environ.get("EMBEDDING_MAX_WORDS") or 6000  # limit 8k token ~ 6k words
 
 # global variables - avoid creating a new client for every request
 client = None
@@ -24,7 +24,7 @@ def truncate_text(text, n=500):
 
 def get_client():
     print("Connecting to Bedrock Service: ", ENDPOINT_URL)
-    client = boto3.client(service_name='bedrock', region_name=AWS_REGION, endpoint_url=ENDPOINT_URL)
+    client = boto3.client(service_name='bedrock-runtime', region_name=AWS_REGION, endpoint_url=ENDPOINT_URL)
     return client
 
 """
