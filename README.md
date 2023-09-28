@@ -78,6 +78,7 @@ Plugin | AWS Region | Launch Stack | Template URL
 QNABOT-AI21-LLM | US East (N. Virginia) - us-east-1 | [![Launch Stack](https://cdn.rawgit.com/buildkite/cloudformation-launch-stack-button-svg/master/launch-stack.svg)](https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://s3.us-east-1.amazonaws.com/aws-ml-blog/artifacts/qnabot-on-aws-plugin-samples/ai21-llm.yaml&stackName=QNABOTPLUGIN-AI21-LLM) | https://s3.us-east-1.amazonaws.com/aws-ml-blog/artifacts/qnabot-on-aws-plugin-samples/ai21-llm.yaml
 QNABOT-ANTHROPIC-LLM | US East (N. Virginia) - us-east-1 | [![Launch Stack](https://cdn.rawgit.com/buildkite/cloudformation-launch-stack-button-svg/master/launch-stack.svg)](https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://s3.us-east-1.amazonaws.com/aws-ml-blog/artifacts/qnabot-on-aws-plugin-samples/anthropic-llm.yaml&stackName=QNABOTPLUGIN-ANTHROPIC-LLM) | https://s3.us-east-1.amazonaws.com/aws-ml-blog/artifacts/qnabot-on-aws-plugin-samples/anthropic-llm.yaml
 QNABOT-BEDROCK-EMBEDDINGS-AND-LLM | US East (N. Virginia) - us-east-1 | [![Launch Stack](https://cdn.rawgit.com/buildkite/cloudformation-launch-stack-button-svg/master/launch-stack.svg)](https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://s3.us-east-1.amazonaws.com/aws-ml-blog/artifacts/qnabot-on-aws-plugin-samples/bedrock-embeddings-and-llm.yaml&stackName=QNABOTPLUGIN-BEDROCK-EMBEDDINGS-AND-LLM) | https://s3.us-east-1.amazonaws.com/aws-ml-blog/artifacts/qnabot-on-aws-plugin-samples/bedrock-embeddings-and-llm.yaml
+QNABOTPLUGIN-LLAMA-2-13B-CHAT-LLM | US East (N. Virginia) - us-east-1 | [![Launch Stack](https://cdn.rawgit.com/buildkite/cloudformation-launch-stack-button-svg/master/launch-stack.svg)](https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://s3.us-east-1.amazonaws.com/aws-ml-blog/artifacts/qnabot-on-aws-plugin-samples/llama-2-13b-chat-llm.yaml&stackName=QNABOTPLUGIN-LLAMA-2-13B-CHAT-LLM) | https://s3.us-east-1.amazonaws.com/aws-ml-blog/artifacts/qnabot-on-aws-plugin-samples/llama-2-13b-chat-llm.yaml
 
 3. On the CloudFormation `Create Stack` page, click `Next`
 4. Enter the following parameters:
@@ -136,6 +137,17 @@ The default AWS region and endpoint URL are set based on the CloudFormation depl
 ### (Optional) Modify Third Party API Keys in Secrets Manager
 
 When your CloudFormation stack status is CREATE_COMPLETE, choose the **Outputs** tab. Use the link for `APIKeySecret` to open AWS Secrets Manager to inspect or edit your API Key in `Secret value`.
+
+### (Optional) Use the LLM as a fallback source of answers, using Lambda hooks with CustomNoMatches/no_hits*
+
+Optionally configure QnAbot to prompt the LLM directly by configuring the LLM Plugin LambdaHook function `QnAItemLambdaHookFunctionName` as a Lambda Hook for the QnABot [CustomNoMatches](https://docs.aws.amazon.com/solutions/latest/qnabot-on-aws/keyword-filters-and-custom-dont-know-answers.html) `no_hits` item. When QnABot cannot answer a question by any other means, it reverts to the `no_hits` item, which, when configured with this Lambda Hook function, will relay the question to the LLM.  
+
+When your Plugin CloudFormation stack status is CREATE_COMPLETE, choose the **Outputs** tab. Look for the outputs `QnAItemLambdaHookFunctionName` and `QnAItemLambdaHookArgs`. Use these values in the LambdaHook section of your no_hits item. You can change the value of "Prefix', or use "None" if you don't want to prefix the LLM answer.
+
+<img src="./images/qnaitem_lambdahook.png" alt="LambdaHook" width="600">  
+  
+<img src="./images/qnaitem_lambdahook_example.png" alt="LambdaHook" width="600">
+
 
 ## Security
 
