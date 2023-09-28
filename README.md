@@ -121,8 +121,8 @@ When the QnABot Cloudformation stack status is CREATE_COMPLETE or UPDATE_COMPLET
 ### (Optional) Configure QnABot to use your new Embeddings function *(currently only available for Bedrock)*
 
 When your CloudFormation stack status is **CREATE_COMPLETE**, choose the **Outputs** tab
-- Copy the value for `EmbeddingsLambdaArn` 
-- Deploy a new QnABot Stack ([instructions](https://docs.aws.amazon.com/solutions/latest/qnabot-on-aws/step-1-launch-the-stack.html)) or Update an existing QnABot stack ([instructions](https://docs.aws.amazon.com/solutions/latest/qnabot-on-aws/update-the-solution.html)), selecting **EmbeddingsApi** as `LAMBDA`, and for **EmbeddingsLambdaArn** enter the Lambda Arn copied above. 
+- Copy the value for `EmbeddingsLambdaArn` and `EmbeddingsLambdaDimensions`
+- Deploy a new QnABot Stack ([instructions](https://docs.aws.amazon.com/solutions/latest/qnabot-on-aws/step-1-launch-the-stack.html)) or Update an existing QnABot stack ([instructions](https://docs.aws.amazon.com/solutions/latest/qnabot-on-aws/update-the-solution.html)), selecting **EmbeddingsApi** as `LAMBDA`, and for **EmbeddingsLambdaArn** and **EmbeddingsLambdaDimensions** enter the Lambda Arn and embedding dimension values copied above. 
 
 For more information, see [QnABot Embeddings README - Lambda Function](https://github.com/aws-solutions/qnabot-on-aws/tree/main/docs/semantic_matching_using_LLM_embeddings#3-lambda-function)
 
@@ -137,6 +137,17 @@ The default AWS region and endpoint URL are set based on the CloudFormation depl
 ### (Optional) Modify Third Party API Keys in Secrets Manager
 
 When your CloudFormation stack status is CREATE_COMPLETE, choose the **Outputs** tab. Use the link for `APIKeySecret` to open AWS Secrets Manager to inspect or edit your API Key in `Secret value`.
+
+### (Optional) Use the LLM as a fallback source of answers, using Lambda hooks with CustomNoMatches/no_hits*
+
+Optionally configure QnAbot to prompt the LLM directly by configuring the LLM Plugin LambdaHook function `QnAItemLambdaHookFunctionName` as a Lambda Hook for the QnABot [CustomNoMatches](https://docs.aws.amazon.com/solutions/latest/qnabot-on-aws/keyword-filters-and-custom-dont-know-answers.html) `no_hits` item. When QnABot cannot answer a question by any other means, it reverts to the `no_hits` item, which, when configured with this Lambda Hook function, will relay the question to the LLM.  
+
+When your Plugin CloudFormation stack status is CREATE_COMPLETE, choose the **Outputs** tab. Look for the outputs `QnAItemLambdaHookFunctionName` and `QnAItemLambdaHookArgs`. Use these values in the LambdaHook section of your no_hits item. You can change the value of "Prefix', or use "None" if you don't want to prefix the LLM answer.
+
+<img src="./images/qnaitem_lambdahook.png" alt="LambdaHook" width="600">  
+  
+<img src="./images/qnaitem_lambdahook_example.png" alt="LambdaHook" width="600">
+
 
 ## Security
 

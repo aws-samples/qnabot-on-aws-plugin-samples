@@ -3,9 +3,9 @@ import json
 import os
 
 # Defaults
-DEFAULT_MODEL_ID = os.environ.get("DEFAULT_MODEL_ID","amazon.titan-tg1-large")
+DEFAULT_MODEL_ID = os.environ.get("DEFAULT_MODEL_ID","amazon.titan-text-express-v1")
 AWS_REGION = os.environ["AWS_REGION_OVERRIDE"] if "AWS_REGION_OVERRIDE" in os.environ else os.environ["AWS_REGION"]
-ENDPOINT_URL = os.environ.get("ENDPOINT_URL", f'https://bedrock.{AWS_REGION}.amazonaws.com')
+ENDPOINT_URL = os.environ.get("ENDPOINT_URL", f'https://bedrock-runtime.{AWS_REGION}.amazonaws.com')
 DEFAULT_MAX_TOKENS = 256
 
 # global variables - avoid creating a new client for every request
@@ -13,7 +13,7 @@ client = None
 
 def get_client():
     print("Connecting to Bedrock Service: ", ENDPOINT_URL)
-    client = boto3.client(service_name='bedrock', region_name=AWS_REGION, endpoint_url=ENDPOINT_URL)
+    client = boto3.client(service_name='bedrock-runtime', region_name=AWS_REGION, endpoint_url=ENDPOINT_URL)
     return client
 
 def get_request_body(modelId, parameters, prompt):

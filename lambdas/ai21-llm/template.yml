@@ -75,6 +75,28 @@ Resources:
           - id: W92
             reason: No requirements to set reserved concurrencies, function will not be invoked simultaneously.
 
+  QnaItemLambdaHookFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      # LambdaHook name must start with 'QNA-' to match QnAbot invoke policy
+      FunctionName: !Sub "QNA-LAMBDAHOOK-${AWS::StackName}"
+      Handler: "lambdahook.lambda_handler"
+      Role: !GetAtt 'LambdaFunctionRole.Arn'
+      MemorySize: 128
+      Timeout: 60
+      Runtime: python3.10
+      Environment:
+        Variables:
+          API_KEY_SECRET_NAME: !Ref AWS::StackName
+      Code: ./src
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W89
+            reason: Lambda function is not communicating with any VPC resources.
+          - id: W92
+            reason: No requirements to set reserved concurrencies, function will not be invoked simultaneously.
+
   OutputSettingsFunctionRole:
     Type: AWS::IAM::Role
     Properties:
@@ -135,3 +157,11 @@ Outputs:
   QnABotSettingQAModelParams:
     Description: QnABot Designer Setting "LLM_QA_MODEL_PARAMS"
     Value: !GetAtt OutputSettings.LLM_QA_MODEL_PARAMS
+
+  QnAItemLambdaHookFunctionName:
+    Description: QnA Item Lambda Hook Function Name (use with no_hits item for optional ask-the-LLM fallback)
+    Value: !Ref QnaItemLambdaHookFunction
+
+  QnAItemLambdaHookArgs:
+    Description: QnA Item Lambda Hook Args (use with no_hits item for optional ask-the-LLM fallback)
+    Value: !GetAtt OutputSettings.QNAITEM_LAMBDAHOOK_ARGS

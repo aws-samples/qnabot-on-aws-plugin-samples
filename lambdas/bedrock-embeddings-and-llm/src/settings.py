@@ -17,7 +17,8 @@ def getEmbeddingSettings(modelId):
         settings.update({
             "EMBEDDINGS_SCORE_THRESHOLD": 0.7,
             "EMBEDDINGS_SCORE_ANSWER_THRESHOLD": 0.6,
-            "EMBEDDINGS_TEXT_PASSAGE_SCORE_THRESHOLD": 0.7
+            "EMBEDDINGS_TEXT_PASSAGE_SCORE_THRESHOLD": 0.7,
+            "EMBEDDINGS_DIMENSIONS": 1536
         })
     else:
         raise Exception("Unsupported provider for embeddings: ", provider)    
