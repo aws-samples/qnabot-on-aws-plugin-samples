@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.4] - 2023-09-28
+### Added
+- Remove preview Bedrock sdk extensions
+- Update to Bedrock GA model identifiers
+- Update to `bedrock-runtime` endpoints/service name
+- Use latest Titan embeddings model
+- Add `EmbeddingsLambdaDimensions` to Bedrock plugin stack outputs
+- Add new [Lambda Hook function](./README.md#optional-use-the-llm-as-a-fallback-source-of-answers-using-lambda-hooks-with-customnomatchesno_hits) to AI21 Plugin (others coming later)  
+
 ## [0.1.3] - 2023-09-21
 ### Added
 - Added LLama-2-13b-Chat plugin - PR #5
