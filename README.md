@@ -121,8 +121,8 @@ When the QnABot Cloudformation stack status is CREATE_COMPLETE or UPDATE_COMPLET
 ### (Optional) Configure QnABot to use your new Embeddings function *(currently only available for Bedrock)*
 
 When your CloudFormation stack status is **CREATE_COMPLETE**, choose the **Outputs** tab
-- Copy the value for `EmbeddingsLambdaArn` 
-- Deploy a new QnABot Stack ([instructions](https://docs.aws.amazon.com/solutions/latest/qnabot-on-aws/step-1-launch-the-stack.html)) or Update an existing QnABot stack ([instructions](https://docs.aws.amazon.com/solutions/latest/qnabot-on-aws/update-the-solution.html)), selecting **EmbeddingsApi** as `LAMBDA`, and for **EmbeddingsLambdaArn** enter the Lambda Arn copied above. 
+- Copy the value for `EmbeddingsLambdaArn` and `EmbeddingsLambdaDimensions`
+- Deploy a new QnABot Stack ([instructions](https://docs.aws.amazon.com/solutions/latest/qnabot-on-aws/step-1-launch-the-stack.html)) or Update an existing QnABot stack ([instructions](https://docs.aws.amazon.com/solutions/latest/qnabot-on-aws/update-the-solution.html)), selecting **EmbeddingsApi** as `LAMBDA`, and for **EmbeddingsLambdaArn** and **EmbeddingsLambdaDimensions** enter the Lambda Arn and embedding dimension values copied above. 
 
 For more information, see [QnABot Embeddings README - Lambda Function](https://github.com/aws-solutions/qnabot-on-aws/tree/main/docs/semantic_matching_using_LLM_embeddings#3-lambda-function)
 
