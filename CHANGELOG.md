@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.5] - 2023-09-30
+### Fixed
+- Increased default EMBEDDINGS_SCORE_THRESHOLD to reduce poor quality QnA matches
+- Fix typo in QA_PROMPT_TEMPLATE
+
 ## [0.1.4] - 2023-09-28
 ### Added
 - Remove preview Bedrock sdk extensions
@@ -31,7 +36,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial release
 
-[Unreleased]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/compare/v0.1.3...develop
+[Unreleased]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/compare/v0.1.5...develop
+[0.1.5]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.3
+[0.1.4]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.3
 [0.1.3]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.3
 [0.1.2]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.2
 [0.1.1]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.1
