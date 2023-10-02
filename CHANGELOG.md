@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.6] - 2023-10-03
+### Fixed
+- Test that Bedrock service and selected models are available in account during stack create/update to avoid downstream failures.
+
 ## [0.1.5] - 2023-09-30
 ### Fixed
 - Increased default EMBEDDINGS_SCORE_THRESHOLD to reduce poor quality QnA matches
@@ -36,9 +40,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial release
 
-[Unreleased]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/compare/v0.1.5...develop
-[0.1.5]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.3
-[0.1.4]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.3
+[Unreleased]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/compare/v0.1.6...develop
+[0.1.6]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.6
+[0.1.5]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.5
+[0.1.4]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.4
 [0.1.3]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.3
 [0.1.2]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.2
 [0.1.1]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.1

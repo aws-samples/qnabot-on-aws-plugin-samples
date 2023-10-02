@@ -193,7 +193,7 @@ Resources:
     Properties:
       Handler: embeddings.lambda_handler
       Role: !GetAtt 'LambdaFunctionRole.Arn'
-      Runtime: python3.10
+      Runtime: python3.11
       Layers: 
         - !Ref BedrockBoto3Layer
       Timeout: 60
@@ -216,7 +216,7 @@ Resources:
     Properties:
       Handler: llm.lambda_handler
       Role: !GetAtt 'LambdaFunctionRole.Arn'
-      Runtime: python3.10
+      Runtime: python3.11
       Layers: 
         - !Ref BedrockBoto3Layer
       Timeout: 60
@@ -248,7 +248,7 @@ Resources:
     Properties:
       Handler: settings.lambda_handler
       Role: !GetAtt 'OutputSettingsFunctionRole.Arn'
-      Runtime: python3.10
+      Runtime: python3.11
       Timeout: 10
       MemorySize: 128
       Code: ./src
@@ -264,6 +264,33 @@ Resources:
     Type: Custom::OutputSettings
     Properties:
       ServiceToken: !GetAtt OutputSettingsFunction.Arn
+      EmbeddingsModelId: !Ref EmbeddingsModelId
+      LLMModelId: !Ref LLMModelId
+      LastUpdate: '10/02/2023' 
+  
+  TestBedrockModelFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: testModel.lambda_handler
+      Role: !GetAtt 'LambdaFunctionRole.Arn'
+      Runtime: python3.11
+      Layers: 
+        - !Ref BedrockBoto3Layer
+      Timeout: 10
+      MemorySize: 128
+      Code: ./src
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W89
+            reason: Lambda function is not communicating with any VPC resources.
+          - id: W92
+            reason: No requirements to set reserved concurrencies, function will not be invoked simultaneously.
+
+  TestBedrockModel:
+    Type: Custom::TestBedrockModel
+    Properties:
+      ServiceToken: !GetAtt TestBedrockModelFunction.Arn
       EmbeddingsModelId: !Ref EmbeddingsModelId
       LLMModelId: !Ref LLMModelId
 
