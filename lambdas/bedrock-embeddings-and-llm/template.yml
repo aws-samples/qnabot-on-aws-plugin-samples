@@ -276,7 +276,7 @@ Resources:
       Runtime: python3.11
       Layers: 
         - !Ref BedrockBoto3Layer
-      Timeout: 10
+      Timeout: 60
       MemorySize: 128
       Code: ./src
     Metadata:
