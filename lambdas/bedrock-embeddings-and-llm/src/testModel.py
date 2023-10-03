@@ -24,15 +24,15 @@ def lambda_handler(event, context):
     if event['RequestType'] != 'Delete':
         prompt = "\n\nHuman: Why is the sky blue?\n\nAssistant:"
         try:
-            client = llm.get_client()
             embeddingsModelId = event['ResourceProperties'].get('EmbeddingsModelId', '')
-            modelId = embeddingsModelId        
+            llmModelId = event['ResourceProperties'].get('LLMModelId', '')
+            client = llm.get_client()
             # Test EmbeddingsModel
+            modelId = embeddingsModelId        
             body = json.dumps({"inputText": prompt})
             print(f"Testing {modelId} - {body}")
             client.invoke_model(body=body, modelId=modelId, accept='application/json', contentType='application/json')
             # Test LLMModel
-            llmModelId = event['ResourceProperties'].get('LLMModelId', '')
             modelId = llmModelId
             parameters = {
                 "modelId": modelId,
