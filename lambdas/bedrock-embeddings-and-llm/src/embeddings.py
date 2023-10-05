@@ -38,7 +38,7 @@ def lambda_handler(event, context):
     global client
     modelId = DEFAULT_MODEL_ID
     max_words = EMBEDDING_MAX_WORDS
-    text = truncate_text(event["inputText"], int(max_words))
+    text = truncate_text(event["inputText"].strip(), int(max_words))
     body = json.dumps({"inputText": text})
     if (client is None):
         client = get_client()
