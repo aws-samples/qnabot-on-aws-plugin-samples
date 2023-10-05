@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: QnABot on AWS LLM Plugin for Bedrock - v0.1.2
+Description: QnABot on AWS LLM Plugin for Bedrock - v0.1.7
 
 Parameters:
 
