@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.7] - 2023-10-05
+### Fixed
+- Bedrock embeddings function now strips any leading or trailing whitespace from input strings before generating embeddings to avoid whitespace affecting accuracy.
+
 ## [0.1.6] - 2023-10-03
 ### Fixed
 - Test that Bedrock service and selected models are available in account during stack create/update to avoid downstream failures.
@@ -41,6 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial release
 
 [Unreleased]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/compare/v0.1.6...develop
+[0.1.7]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.7
 [0.1.6]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.6
 [0.1.5]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.5
 [0.1.4]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.4
