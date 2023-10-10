@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.8] - 2023-10-05
+## [0.1.8] - 2023-10-10
 ### Added
 - Added Mistral 7b Instruct LLM - PR #10
 
