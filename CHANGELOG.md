@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.8] - 2023-10-05
+### Added
+- Added Mistral 7b Instruct LLM - PR #10
+
 ## [0.1.7] - 2023-10-05
 ### Fixed
 - Bedrock embeddings function now strips any leading or trailing whitespace from input strings before generating embeddings to avoid whitespace affecting accuracy.
@@ -44,7 +48,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial release
 
-[Unreleased]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/compare/v0.1.6...develop
+[Unreleased]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/compare/v0.1.8...develop
+[0.1.8]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.8
 [0.1.7]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.7
 [0.1.6]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.6
 [0.1.5]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.5
