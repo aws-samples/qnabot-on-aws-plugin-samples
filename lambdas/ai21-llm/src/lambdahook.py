@@ -91,9 +91,10 @@ def format_response(event, llm_response, prefix):
 
 def lambda_handler(event, context):
     print("Received event: %s" % json.dumps(event))
-    prompt = event["req"]["question"]
-    # args = {"Prefix:"<Prefix|None>", "Model_params":{"max_tokens":256}}
+    # args = {"Prefix:"<Prefix|None>", "Model_params":{"max_tokens":256}, "Prompt":"<prompt>"}
     args = get_args_from_lambdahook_args(event)
+    # prompt set from args, or from req.question if not specified in args.
+    prompt = args.get("Prompt", event["req"]["question"])
     model_params = args.get("Model_params",{})
     llm_response = get_llm_response(model_params, prompt)
     prefix = args.get("Prefix","LLM Answer:")
