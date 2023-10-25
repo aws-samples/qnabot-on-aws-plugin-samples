@@ -3,7 +3,7 @@ import json
 import os
 
 # Defaults
-DEFAULT_MODEL_ID = os.environ.get("DEFAULT_MODEL_ID","amazon.titan-text-express-v1")
+DEFAULT_MODEL_ID = os.environ.get("DEFAULT_MODEL_ID","anthropic.claude-instant-v1")
 AWS_REGION = os.environ["AWS_REGION_OVERRIDE"] if "AWS_REGION_OVERRIDE" in os.environ else os.environ["AWS_REGION"]
 ENDPOINT_URL = os.environ.get("ENDPOINT_URL", f'https://bedrock-runtime.{AWS_REGION}.amazonaws.com')
 DEFAULT_MAX_TOKENS = 256
@@ -75,7 +75,7 @@ def call_llm(parameters, prompt):
 """
 Example Test Event:
 {
-  "prompt": "Human:Why is the sky blue?\nAssistant:",
+  "prompt": "\n\nHuman:Why is the sky blue?\n\nAssistant:",
   "parameters": {
     "modelId": "anthropic.claude-v1",
     "temperature": 0
