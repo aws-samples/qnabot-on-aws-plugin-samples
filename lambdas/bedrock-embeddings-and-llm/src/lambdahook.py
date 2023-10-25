@@ -8,6 +8,14 @@ AWS_REGION = os.environ["AWS_REGION_OVERRIDE"] if "AWS_REGION_OVERRIDE" in os.en
 ENDPOINT_URL = os.environ.get("ENDPOINT_URL", f'https://bedrock-runtime.{AWS_REGION}.amazonaws.com')
 DEFAULT_MAX_TOKENS = 256
 
+# global variables - avoid creating a new client for every request
+client = None
+
+def get_client():
+    print("Connecting to Bedrock Service: ", ENDPOINT_URL)
+    client = boto3.client(service_name='bedrock-runtime', region_name=AWS_REGION, endpoint_url=ENDPOINT_URL)
+    return client
+
 def get_request_body(modelId, parameters, prompt):
     provider = modelId.split(".")[0]
     request_body = None
@@ -60,17 +68,17 @@ def format_prompt(modelId, prompt):
             prompt = "\n\nHuman: " + prompt
             print("Prepended '\\n\\nHuman:'")
         if not prompt.endswith("\n\nAssistant:"):
-            prompt = prompt + "\n\nAssistant: "
+            prompt = prompt + "\n\nAssistant:"
             print("Appended '\\n\\nHuman:'")
-    print(f"Prompt: {prompt}")
+    print(f"Prompt: {json.dumps(prompt)}")
     return prompt
 
 def get_llm_response(parameters, prompt):
     global client
     modelId = parameters.pop("modelId", DEFAULT_MODEL_ID)
+    prompt = format_prompt(modelId, prompt)
     body = get_request_body(modelId, parameters, prompt)
     print("ModelId", modelId, "-  Body: ", body)
-    prompt = format_prompt(modelId, prompt)
     if (client is None):
         client = get_client()
     response = client.invoke_model(body=json.dumps(body), modelId=modelId, accept='application/json', contentType='application/json')
