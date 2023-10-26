@@ -60,7 +60,9 @@ def get_generate_text(modelId, response):
         raise Exception("Unsupported provider: ", provider)
     return generated_text
 
+
 def format_prompt(modelId, prompt):
+    # TODO - replace prompt template placeholders - eg query, input, chatHistory, session attributes, user info  
     provider = modelId.split(".")[0]
     if provider == "anthropic":
         print("Model provider is Anthropic. Checking prompt format.")
