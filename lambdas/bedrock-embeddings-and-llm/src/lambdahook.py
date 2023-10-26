@@ -60,9 +60,25 @@ def get_generate_text(modelId, response):
         raise Exception("Unsupported provider: ", provider)
     return generated_text
 
-def call_llm(parameters, prompt):
+
+def format_prompt(modelId, prompt):
+    # TODO - replace prompt template placeholders - eg query, input, chatHistory, session attributes, user info  
+    provider = modelId.split(".")[0]
+    if provider == "anthropic":
+        print("Model provider is Anthropic. Checking prompt format.")
+        if not prompt.startswith("\n\nHuman:"):
+            prompt = "\n\nHuman: " + prompt
+            print("Prepended '\\n\\nHuman:'")
+        if not prompt.endswith("\n\nAssistant:"):
+            prompt = prompt + "\n\nAssistant:"
+            print("Appended '\\n\\nHuman:'")
+    print(f"Prompt: {json.dumps(prompt)}")
+    return prompt
+
+def get_llm_response(parameters, prompt):
     global client
     modelId = parameters.pop("modelId", DEFAULT_MODEL_ID)
+    prompt = format_prompt(modelId, prompt)
     body = get_request_body(modelId, parameters, prompt)
     print("ModelId", modelId, "-  Body: ", body)
     if (client is None):
@@ -71,24 +87,51 @@ def call_llm(parameters, prompt):
     generated_text = get_generate_text(modelId, response)
     return generated_text
 
+def get_args_from_lambdahook_args(event):
+    parameters = {}
+    lambdahook_args_list = event["res"]["result"].get("args",[])
+    print("LambdaHook args: ", lambdahook_args_list)
+    if len(lambdahook_args_list):
+        try:
+            parameters = json.loads(lambdahook_args_list[0])
+        except Exception as e:
+            print(f"Failed to parse JSON:", lambdahook_args_list[0], e)
+            print("..continuing")
+    return parameters
 
-"""
-Example Test Event:
-{
-  "prompt": "\n\nHuman:Why is the sky blue?\n\nAssistant:",
-  "parameters": {
-    "modelId": "anthropic.claude-v1",
-    "temperature": 0
-  }
-}
-For supported parameters for each provider model, see Bedrock docs: https://us-east-1.console.aws.amazon.com/bedrock/home?region=us-east-1#/providers
-"""
-def lambda_handler(event, context):
-    print("Event: ", json.dumps(event))
-    prompt = event["prompt"]
-    parameters = event["parameters"] 
-    generated_text = call_llm(parameters, prompt)
-    print("Result:", json.dumps(generated_text))
-    return {
-        'generated_text': generated_text
+def format_response(event, llm_response, prefix):
+    # set plaintext, markdown, & ssml response
+    if prefix in ["None", "N/A", "Empty"]:
+        prefix = None
+    plainttext = llm_response
+    markdown = llm_response
+    ssml = llm_response
+    if prefix:
+        plainttext = f"{prefix}\n\n{plainttext}"
+        markdown = f"**{prefix}**\n\n{markdown}"
+    # add plaintext, markdown, and ssml fields to event.res
+    event["res"]["message"] = plainttext
+    event["res"]["session"]["appContext"] = {
+        "altMessages": {
+            "markdown": markdown,
+            "ssml": ssml
+        }
     }
+    #TODO - can we determine when LLM has a good answer or not?
+    #For now, always assume it's a good answer.
+    #QnAbot sets session attribute qnabot_gotanswer True when got_hits > 0
+    event["res"]["got_hits"] = 1   
+    return event
+
+def lambda_handler(event, context):
+    print("Received event: %s" % json.dumps(event)) 
+    # args = {"Prefix:"<Prefix|None>", "Model_params":{"modelId":"anthropic.claude-instant-v1", "max_tokens":256}, "Prompt":"<prompt>"}
+    args = get_args_from_lambdahook_args(event)
+    # prompt set from args, or from req.question if not specified in args.
+    prompt = args.get("Prompt", event["req"]["question"])
+    model_params = args.get("Model_params",{})
+    llm_response = get_llm_response(model_params, prompt)
+    prefix = args.get("Prefix","LLM Answer:")
+    event = format_response(event, llm_response, prefix)
+    print("Returning response: %s" % json.dumps(event))
+    return event

@@ -12,7 +12,7 @@ Parameters:
 
   LLMModelId:
     Type: String
-    Default: amazon.titan-text-express-v1
+    Default: anthropic.claude-instant-v1
     AllowedValues:
       - amazon.titan-text-express-v1
       - ai21.j2-ultra-v1
@@ -230,6 +230,27 @@ Resources:
           - id: W92
             reason: No requirements to set reserved concurrencies, function will not be invoked simultaneously.
 
+  QnaItemLambdaHookFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      # LambdaHook name must start with 'QNA-' to match QnAbot invoke policy
+      FunctionName: !Sub "QNA-LAMBDAHOOK-${AWS::StackName}"
+      Handler: "lambdahook.lambda_handler"
+      Role: !GetAtt 'LambdaFunctionRole.Arn'
+      Runtime: python3.11
+      Timeout: 60
+      MemorySize: 128
+      Layers: 
+        - !Ref BedrockBoto3Layer
+      Code: ./src
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W89
+            reason: Lambda function is not communicating with any VPC resources.
+          - id: W92
+            reason: No requirements to set reserved concurrencies, function will not be invoked simultaneously.
+
   OutputSettingsFunctionRole:
     Type: AWS::IAM::Role
     Properties:
@@ -266,7 +287,7 @@ Resources:
       ServiceToken: !GetAtt OutputSettingsFunction.Arn
       EmbeddingsModelId: !Ref EmbeddingsModelId
       LLMModelId: !Ref LLMModelId
-      LastUpdate: '10/02/2023' 
+      LastUpdate: '10/25/2023' 
   
   TestBedrockModelFunction:
     Type: AWS::Lambda::Function
@@ -339,3 +360,11 @@ Outputs:
   QnABotSettingQAModelParams:
     Description: QnABot Designer Setting "LLM_QA_MODEL_PARAMS"
     Value: !GetAtt OutputSettings.LLM_QA_MODEL_PARAMS
+
+  QnAItemLambdaHookFunctionName:
+    Description: QnA Item Lambda Hook Function Name (use with no_hits item for optional ask-the-LLM fallback)
+    Value: !Ref QnaItemLambdaHookFunction
+
+  QnAItemLambdaHookArgs:
+    Description: QnA Item Lambda Hook Args (use with no_hits item for optional ask-the-LLM fallback)
+    Value: !GetAtt OutputSettings.QNAITEM_LAMBDAHOOK_ARGS

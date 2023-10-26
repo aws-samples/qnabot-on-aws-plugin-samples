@@ -158,6 +158,11 @@ Optionally configure QnAbot to prompt the LLM directly by configuring the LLM Pl
 
 When your Plugin CloudFormation stack status is CREATE_COMPLETE, choose the **Outputs** tab. Look for the outputs `QnAItemLambdaHookFunctionName` and `QnAItemLambdaHookArgs`. Use these values in the LambdaHook section of your no_hits item. You can change the value of "Prefix', or use "None" if you don't want to prefix the LLM answer.
 
+The default behavior is to relay the user's query to the LLM as the prompt. If LLM_QUERY_GENERATION is enabled, the generated (disambiguated) query will be used, otherwise the user's utterance is used.  You can override this behavior by supplying an explicit `"Prompt"` key in the `QnAItemLambdaHookArgs` value. For example setting `QnAItemLambdaHookArgs` to `{"Prefix": "LLM Answer:", "Model_params": {"modelId": "anthropic.claude-instant-v1", "temperature": 0}, "Prompt":"Why is the sky blue?"}` will ignore the user's input and simply use the configured prompt instead. Prompts supplied in this manner do not (yet) support variable substitution (eg to substitute user attributes, session attributes, etc. into the prompt). If you feel that would be a useful feature, please create a feature request issue in the repo, or, better yet, implement it, and submit a Pull Request!  
+
+Currently the Lambda hook option has been implemented only in the Bedrock and AI21 plugins. 
+
+
 <img src="./images/qnaitem_lambdahook.png" alt="LambdaHook" width="600">  
   
 <img src="./images/qnaitem_lambdahook_example.png" alt="LambdaHook" width="600">

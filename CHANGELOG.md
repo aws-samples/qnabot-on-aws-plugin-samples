@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.9] - 2023-10-26
+### Added
+- Added Amazon Bedrock support for configuring LLM as a fallback source of answers, using Lambda hooks with CustomNoMatches/no_hits  - PR #11
+
 ## [0.1.8] - 2023-10-10
 ### Added
 - Added Mistral 7b Instruct LLM - PR #10
@@ -48,7 +52,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial release
 
-[Unreleased]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/compare/v0.1.8...develop
+[Unreleased]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/compare/v0.1.9...develop
+[0.1.9]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.9
 [0.1.8]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.8
 [0.1.7]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.7
 [0.1.6]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.6

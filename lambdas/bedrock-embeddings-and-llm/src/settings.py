@@ -29,9 +29,11 @@ def getModelSettings(modelId):
         "modelId": modelId,
         "temperature": 0
     }
+    lambdahook_args = {"Prefix":"LLM Answer:", "Model_params": params}
     settings = {
         'LLM_GENERATE_QUERY_MODEL_PARAMS': json.dumps(params),
-        'LLM_QA_MODEL_PARAMS': json.dumps(params)
+        'LLM_QA_MODEL_PARAMS': json.dumps(params),
+        'QNAITEM_LAMBDAHOOK_ARGS': json.dumps(lambdahook_args)
     }
     provider = modelId.split(".")[0]
     if provider == "anthropic":
