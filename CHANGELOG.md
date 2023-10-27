@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.10] - 2023-10-27
+### Fixed
+- Prompt bug: question not denoted by an XML tag, so LLM gets confused about what it's answering - PR #13
+- Upgrade issue in BedrockBoto3Layer due to bedrock boto3 zip - PR #16
+
 ## [0.1.9] - 2023-10-26
 ### Added
 - Added Amazon Bedrock support for configuring LLM as a fallback source of answers, using Lambda hooks with CustomNoMatches/no_hits  - PR #11
