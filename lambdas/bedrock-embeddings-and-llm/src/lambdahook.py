@@ -60,9 +60,15 @@ def get_generate_text(modelId, response):
         raise Exception("Unsupported provider: ", provider)
     return generated_text
 
+def replace_template_placeholders(prompt, event):
+    # history
+    history_array = json.loads(event["req"]["_userInfo"].get("chatMessageHistory","[]"))
+    history_str = '\n'.join(f"{key}: {value}" for item in history_array for key, value in item.items())
+    prompt = prompt.replace("{history}", history_str)
+    # TODO - replace additional prompt template placeholders - eg query, input, session attributes, user info
+    return prompt
 
-def format_prompt(modelId, prompt):
-    # TODO - replace prompt template placeholders - eg query, input, chatHistory, session attributes, user info  
+def format_prompt(modelId, prompt):  
     provider = modelId.split(".")[0]
     if provider == "anthropic":
         print("Model provider is Anthropic. Checking prompt format.")
@@ -75,10 +81,8 @@ def format_prompt(modelId, prompt):
     print(f"Prompt: {json.dumps(prompt)}")
     return prompt
 
-def get_llm_response(parameters, prompt):
+def get_llm_response(modelId, parameters, prompt):
     global client
-    modelId = parameters.pop("modelId", DEFAULT_MODEL_ID)
-    prompt = format_prompt(modelId, prompt)
     body = get_request_body(modelId, parameters, prompt)
     print("ModelId", modelId, "-  Body: ", body)
     if (client is None):
@@ -127,10 +131,13 @@ def lambda_handler(event, context):
     print("Received event: %s" % json.dumps(event)) 
     # args = {"Prefix:"<Prefix|None>", "Model_params":{"modelId":"anthropic.claude-instant-v1", "max_tokens":256}, "Prompt":"<prompt>"}
     args = get_args_from_lambdahook_args(event)
+    model_params = args.get("Model_params",{})
+    modelId = model_params.pop("modelId", DEFAULT_MODEL_ID)
     # prompt set from args, or from req.question if not specified in args.
     prompt = args.get("Prompt", event["req"]["question"])
-    model_params = args.get("Model_params",{})
-    llm_response = get_llm_response(model_params, prompt)
+    prompt = format_prompt(modelId, prompt)
+    prompt = replace_template_placeholders(prompt, event)
+    llm_response = get_llm_response(modelId, model_params, prompt)
     prefix = args.get("Prefix","LLM Answer:")
     event = format_response(event, llm_response, prefix)
     print("Returning response: %s" % json.dumps(event))
