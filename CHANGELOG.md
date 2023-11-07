@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.11] - 2023-11-07
+### Fixed
+- Error in Bedrock QnABotSettingQAPromptTemplate output - prompt does not terminate with '\n\nAssistant:` and generates error from Bedrock - #13
+
 ## [0.1.10] - 2023-10-27
 ### Fixed
 - Prompt bug: question not denoted by an XML tag, so LLM gets confused about what it's answering - PR #13
