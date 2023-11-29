@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.12] - 2023-11-29
+### Added
+- Amazon Q, your business expert now integrates with QnABot as a fallback answer source, using QnAbot's using Lambda hooks with CustomNoMatches/no_hits. For more information see: [QnABot LambdaHook for Amazon Q, your business expert (preview)](./lambdas/qna_bot_qbusiness_lambdahook/README.md)
+
 ## [0.1.11] - 2023-11-07
 ### Fixed
 - Error in Bedrock QnABotSettingQAPromptTemplate output - prompt does not terminate with '\n\nAssistant:` and generates error from Bedrock - #13
@@ -61,7 +65,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial release
 
-[Unreleased]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/compare/v0.1.9...develop
+[Unreleased]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/compare/v0.1.12...develop
+[0.1.12]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.12
+[0.1.11]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.11
+[0.1.10]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.10
 [0.1.9]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.9
 [0.1.8]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.8
 [0.1.7]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.7

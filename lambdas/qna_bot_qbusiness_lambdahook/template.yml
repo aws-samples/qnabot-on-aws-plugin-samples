@@ -1,0 +1,98 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  Amazon Q (Business) Lambda Hook function for using with 'QnABot on AWS'. 
+  Use with the 'no_hits' (CustomNoMatches) item to use Amazon Q when no good answers are found by other methods - v0.1.12
+
+Parameters:
+
+  AmazonQAppId:
+    Type: String
+    AllowedPattern: '^[a-zA-Z0-9][a-zA-Z0-9-]{35}$'
+    Description: Amazon Q Application ID (copy from AWS console)
+
+  AmazonQUserId:
+    Type: String
+    Default: ""
+    Description: Amazon Q User ID (leave empty to use authenticated bot users' email as user Id)
+
+  AmazonQRegion:
+    Type: String
+    Default: "us-east-1"
+    AllowedPattern: '^[a-z]{2}-[a-z]+-[0-9]+$'
+    Description: Amazon Q Region
+
+  AmazonQEndpointUrl:
+    Type: String
+    Default: ""
+    Description: (Optional) Amazon Q Endpoint (leave empty for default endpoint)
+
+Resources:
+
+  QBusinessModelLayer:
+    Type: "AWS::Lambda::LayerVersion"
+    Properties:
+      Content: ../../layers/qbusiness_boto3_model
+      CompatibleRuntimes:
+        - python3.11
+
+  LambdaFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "qbusiness:ChatSync"
+                Resource: !Sub "arn:aws:qbusiness:us-east-1:912625584728:application/${AmazonQAppId}"
+          PolicyName: QBusinessPolicy
+
+  QnaItemLambdaHookFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+    # LambdaHook name must start with 'QNA-' to match QnAbot invoke policy
+      FunctionName: !Sub "QNA-LAMBDAHOOK-${AWS::StackName}"
+      Handler: lambdahook.lambda_handler
+      Role: !GetAtt 'LambdaFunctionRole.Arn'
+      Runtime: python3.11
+      Layers: 
+        - !Ref QBusinessModelLayer
+      Timeout: 60
+      MemorySize: 128
+      Environment:
+        Variables:
+          AWS_DATA_PATH: /opt/model
+          AMAZONQ_APP_ID: !Ref AmazonQAppId
+          AMAZONQ_USER_ID: !Ref AmazonQUserId
+          AMAZONQ_REGION: !Ref AmazonQRegion
+          AMAZONQ_ENDPOINT_URL: !Ref AmazonQEndpointUrl
+      Code: ./src
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W89
+            reason: No VPC resources.
+          - id: W92
+            reason: No requirements to set reserved concurrencies.
+
+
+Outputs:
+
+  QnAItemLambdaHookFunctionName:
+    Description: QnA Item Lambda Hook Function Name (use with no_hits item for optional ask-Amazon-Q-Business fallback)
+    Value: !Ref 'QnaItemLambdaHookFunction'
+
+  QnAItemLambdaHookArgs:
+    Description: QnA Item Lambda Hook Args (use with no_hits item for optional ask-the-LLM fallback)
+    Value: '{"Prefix":"Amazon Q Answer:", "ShowContextText":true, "ShowSourceLinks":true}'
+    
