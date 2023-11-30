@@ -54,7 +54,7 @@ Resources:
               - Effect: Allow
                 Action:
                   - "qbusiness:ChatSync"
-                Resource: !Sub "arn:aws:qbusiness:us-east-1:912625584728:application/${AmazonQAppId}"
+                Resource: !Sub "arn:aws:qbusiness:${AWS::Region}:${AWS::AccountId}:application/${AmazonQAppId}"
           PolicyName: QBusinessPolicy
 
   QnaItemLambdaHookFunction:
