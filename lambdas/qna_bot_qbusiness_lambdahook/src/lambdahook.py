@@ -19,21 +19,19 @@ qbusiness_client = boto3.client(
 
 def get_amazonq_response(prompt, context, amazonq_userid):
     print(f"get_amazonq_response: prompt={prompt}, app_id={AMAZONQ_APP_ID}, context={context}")
+    input = {
+        "applicationId": AMAZONQ_APP_ID,
+        "userMessage": prompt,
+        "userId": amazonq_userid
+    }
     if context:
-        input = {
-            "applicationId": AMAZONQ_APP_ID,
-            "conversationId": context["conversationId"],
-            "parentMessageId": context["parentMessageId"],
-            "userMessage": prompt,
-            "userId": amazonq_userid
-        }
+        if context["conversationId"]:
+            input["conversationId"] = context["conversationId"]
+        if context["parentMessageId"]:
+            input["parentMessageId"] = context["parentMessageId"]
     else:
-        input = {
-            "applicationId": AMAZONQ_APP_ID,
-            "userMessage": prompt,
-            "userId": amazonq_userid,
-            "clientToken": str(uuid.uuid4())
-        }
+        input["clientToken"] = str(uuid.uuid4())
+
     print("Amazon Q Input: ", json.dumps(input))
     try:
         resp = qbusiness_client.chat_sync(**input)
