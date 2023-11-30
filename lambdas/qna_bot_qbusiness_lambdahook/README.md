@@ -16,7 +16,7 @@ Use AWS CloudFormation to deploy one or more of the sample plugin Lambdas in you
 
 1. Log into the [AWS console](https://console.aws.amazon.com/) if you are not already.
 *Note: Ensure that your IAM Role/User have permissions to create and manage the necessary resources and components for this application.*
-2. Choose one of the **Launch Stack** buttons below for your desired LLM and AWS region to open the AWS CloudFormation console and create a new stack.
+2. Choose one of the **Launch Stack** buttons below for your desired AWS region to open the AWS CloudFormation console and create a new stack.
 3. On the CloudFormation `Create Stack` page, click `Next`
 4. Enter the following parameters:
     1. `Stack Name`: Name your stack, e.g. QNABOTPLUGIN-QNA-BOT-QBUSINESS-LAMBDAHOOK.
@@ -27,8 +27,8 @@ Use AWS CloudFormation to deploy one or more of the sample plugin Lambdas in you
 
 *Note on UserId:*  
 You have two options:  
-1. (Default) Map each bot user's email to a Q Business userid. This means that each QnAbot user must be an authenticated user (eg logged in using Lex Web UI) and the users email must mapped to a provisioned user in Q. This is the default. ACLs will be observed per user.
-2. (Proxy) Alternatively, when you deploy you can choose a single email to use when QnABot invokes Amazon Q. This removes the need for QnABot users to be authenticated (logged in) or for their emails to be registered in Q, but means that no per-user ACLs are supported - ACLS will be based on the single proxy userId. Requests will be throttled based on the user request quota.
+1. (Default) Map each bot user's email to a Q Business userid. This means that each QnAbot user must be an authenticated user (e.g. logged in via Cognito using Lex Web UI) and the user's email must mapped to a provisioned user in Amazon Q. ACLs will be observed per user. This is the default setup.
+2. (Proxy) Alternatively, when you deploy you can choose a single email to use when QnABot invokes Amazon Q. This removes the need for QnABot users to be authenticated (logged in) or for their emails to be registered in Amazon Q, but it also means that no per-user ACLs are supported since ACLS will be based on the single proxy userId. Requests will be throttled based on the user request quota.
 
 
 #### <u>N. Virginia (us-east-1)</u>
@@ -48,7 +48,8 @@ Configure QnAbot to prompt Amazon Q directly by configuring the AmazonQ LambdaHo
 
 When your QNABOTPLUGIN-QNA-BOT-QBUSINESS-LAMBDAHOOK Plugin CloudFormation stack status is CREATE_COMPLETE, choose the **Outputs** tab. Look for the outputs `QnAItemLambdaHookFunctionName` and `QnAItemLambdaHookArgs`. Use these values in the LambdaHook section of your no_hits item. You can change the value of "Prefix', or use "None" if you don't want to prefix the LLM answer.
 
-The default behavior is to relay the user's query to Amazon Q Business as the user input. If LLM_QUERY_GENERATION is enabled, the generated (disambiguated) query will be used, otherwise the user's utterance is used.  You can override this behavior by supplying an explicit `"Prompt"` key in the `QnAItemLambdaHookArgs` value. For example setting `QnAItemLambdaHookArgs` to `{"Prefix":"Amazon Q Answer:", "ShowContextText":true, "ShowSourceLinks":true, "Prompt":"Why is the sky blue?"}` will ignore the user's input and simply use the configured prompt instead. Prompts supplied in this manner do not (yet) support variable substitution (eg to substitute user attributes, session attributes, etc. into the prompt). If you feel that would be a useful feature, please create a feature request issue in the repo, or, better yet, implement it, and submit a Pull Request!  
+The default behavior is to relay the user's query to Amazon Q Business as the user input. If LLM_QUERY_GENERATION is enabled, the generated (disambiguated) query will be used, otherwise the user's utterance is used.  
+Alternatively, you can supply an explicit `"Prompt"` key in the `QnAItemLambdaHookArgs` value. For example setting `QnAItemLambdaHookArgs` to `{"Prefix":"Amazon Q Answer:", "ShowContextText":true, "ShowSourceLinks":true, "Prompt":"Why is the sky blue?"}` will ignore the user's input and simply use the configured prompt instead. You may find this useful if you use the function as a Lambda Hook for QnA items that match explicit lists of utterances/questions, and you want to normalise these into a single static question to ask Amazon Q. Prompts supplied in this manner do not (yet) support variable substitution (eg to substitute user attributes, session attributes, etc. into the prompt). If you feel that would be a useful feature, please create a feature request issue in the repo, or, better yet, implement it, and submit a Pull Request!  
 
 ### Say hello
 > Time to say Hi!
