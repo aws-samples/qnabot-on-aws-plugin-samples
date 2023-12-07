@@ -8,6 +8,10 @@ ANTHROPIC_GENERATE_QUERY_PROMPT_TEMPLATE = """<br><br>Human: Here is a chat hist
 ANTHROPIC_QA_PROMPT_TEMPLATE = AMAZON_QA_PROMPT_TEMPLATE
 AI21_GENERATE_QUERY_PROMPT_TEMPATE = ANTHROPIC_GENERATE_QUERY_PROMPT_TEMPLATE
 AI21_QA_PROMPT_TEMPLATE = """The following is a friendly conversation between a human and an AI. The AI is talkative and provides lots of specific details from its context. If the AI does not know the answer to a question, it truthfully says it does not know. Documents: {context} Instruction: Based on the above documents, provide a detailed answer for {query} Answer "don't know" if not present in the document. Solution:"""
+COHERE_GENERATE_QUERY_PROMPT_TEMPLATE = AMAZON_GENERATE_QUERY_PROMPT_TEMPLATE
+COHERE_QA_PROMPT_TEMPLATE = AMAZON_QA_PROMPT_TEMPLATE
+META_GENERATE_QUERY_PROMPT_TEMPLATE = AMAZON_GENERATE_QUERY_PROMPT_TEMPLATE
+META_QA_PROMPT_TEMPLATE = AMAZON_QA_PROMPT_TEMPLATE
 
 def getEmbeddingSettings(modelId):
     provider = modelId.split(".")[0]
@@ -50,6 +54,16 @@ def getModelSettings(modelId):
         settings.update({
         'LLM_GENERATE_QUERY_PROMPT_TEMPLATE': AMAZON_GENERATE_QUERY_PROMPT_TEMPLATE,
         'LLM_QA_PROMPT_TEMPLATE': AMAZON_QA_PROMPT_TEMPLATE
+        })
+    elif provider == "cohere":
+        settings.update({
+        'LLM_GENERATE_QUERY_PROMPT_TEMPLATE': COHERE_GENERATE_QUERY_PROMPT_TEMPLATE,
+        'LLM_QA_PROMPT_TEMPLATE': COHERE_QA_PROMPT_TEMPLATE
+        })
+    elif provider == "meta":
+        settings.update({
+        'LLM_GENERATE_QUERY_PROMPT_TEMPLATE': META_GENERATE_QUERY_PROMPT_TEMPLATE,
+        'LLM_QA_PROMPT_TEMPLATE': META_QA_PROMPT_TEMPLATE
         })
     else:
         raise Exception("Unsupported provider: ", provider)
