@@ -27,8 +27,8 @@ Use AWS CloudFormation to deploy one or more of the sample plugin Lambdas in you
 
 *Note on UserId:*  
 You have two options:  
-1. (Default) Map each bot user's email to a Q Business userid. This means that each QnAbot user must be an authenticated user (e.g. logged in via Cognito using Lex Web UI) and the user's email must mapped to a provisioned user in Amazon Q. ACLs will be observed per user. This is the default setup.
-2. (Proxy) Alternatively, when you deploy you can choose a single email to use when QnABot invokes Amazon Q. This removes the need for QnABot users to be authenticated (logged in) or for their emails to be registered in Amazon Q, but it also means that no per-user ACLs are supported since ACLS will be based on the single proxy userId. Requests will be throttled based on the user request quota.
+1. (Default) Map each bot user's email to a Q Business userid. This means that each QnAbot user must be an authenticated user (e.g. logged in via Cognito using Lex Web UI). ACLs will be observed per user. This is the default setup.
+2. (Proxy) Alternatively, when you deploy you can choose a single email to use when QnABot invokes Amazon Q. This removes the need for QnABot users to be authenticated (logged in), but it also means that no per-user ACLs are supported since ACLS will be based on the single proxy userId.
 
 
 #### <u>N. Virginia (us-east-1)</u>
