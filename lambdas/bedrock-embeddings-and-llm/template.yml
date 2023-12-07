@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: QnABot on AWS LLM Plugin for Bedrock - v0.1.11
+Description: QnABot on AWS LLM Plugin for Bedrock - v0.1.13
 
 Parameters:
 
@@ -15,11 +15,17 @@ Parameters:
     Default: anthropic.claude-instant-v1
     AllowedValues:
       - amazon.titan-text-express-v1
+      - amazon.titan-text-lite-v1
       - ai21.j2-ultra-v1
       - ai21.j2-mid-v1
       - anthropic.claude-v1
       - anthropic.claude-instant-v1
       - anthropic.claude-v2
+      - anthropic.claude-v2:1
+      - cohere.command-text-v14
+      - cohere.command-light-text-v14
+      - meta.llama2-13b-chat-v1
+      - meta.llama2-70b-chat-v1
     Description: Bedrock LLM ModelId
 
 Resources:
@@ -69,18 +75,6 @@ Resources:
     Properties:
       Handler: index.handler
       Runtime: python3.10
-      Role: !GetAtt 'BedrockBoto3ZipFunctionRole.Arn'
-      Timeout: 60
-      MemorySize: 512
-      Environment:
-        Variables:
-          BOTO3_BUCKET: !Ref BedrockBoto3Bucket
-      Code:
-        ZipFile: |
-    Type: AWS::Lambda::Function
-    Properties:
-      Handler: index.handler
-      Runtime: python3.11
       Role: !GetAtt 'BedrockBoto3ZipFunctionRole.Arn'
       Timeout: 60
       MemorySize: 512

@@ -40,6 +40,18 @@ def get_request_body(modelId, parameters, prompt):
             "inputText": prompt,
             "textGenerationConfig": textGenerationConfig
         }
+    elif provider == "cohere":
+        request_body = {
+            "prompt": prompt,
+            "max_tokens": DEFAULT_MAX_TOKENS
+        }
+        request_body.update(parameters)
+    elif provider == "meta":
+        request_body = {
+            "prompt": prompt,
+            "max_gen_len": DEFAULT_MAX_TOKENS
+        }
+        request_body.update(parameters)
     else:
         raise Exception("Unsupported provider: ", provider)
     return request_body
@@ -56,6 +68,12 @@ def get_generate_text(modelId, response):
     elif provider == "amazon":
         response_body = json.loads(response.get("body").read())
         generated_text = response_body.get("results")[0].get("outputText")
+    elif provider == "cohere":
+        response_body = json.loads(response.get('body').read())
+        generated_text = response_body.get("generations")[0].get("text")
+    elif provider == "meta":
+        response_body = json.loads(response.get('body').read())
+        generated_text = response_body.get("generation")
     else:
         raise Exception("Unsupported provider: ", provider)
     return generated_text
