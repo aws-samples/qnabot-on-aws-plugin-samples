@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.13] - 2023-12-06
+### Added
+- Bedrock plugin updates to support new text models - #22
+  - amazon.titan-text-lite-v1
+  - anthropic.claude-v2:1
+  - cohere.command-text-v14
+  - cohere.command-light-text-v14
+  - meta.llama2-13b-chat-v1
+  - meta.llama2-70b-chat-v1
+
 ## [0.1.12] - 2023-11-29
 ### Added
 - Amazon Q, your business expert now integrates with QnABot as a fallback answer source, using QnAbot's using Lambda hooks with CustomNoMatches/no_hits. For more information see: [QnABot LambdaHook for Amazon Q, your business expert (preview)](./lambdas/qna_bot_qbusiness_lambdahook/README.md)
@@ -65,7 +75,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial release
 
-[Unreleased]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/compare/v0.1.12...develop
+[Unreleased]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/compare/v0.1.13...develop
+[0.1.13]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.13
 [0.1.12]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.12
 [0.1.11]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.11
 [0.1.10]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.10
