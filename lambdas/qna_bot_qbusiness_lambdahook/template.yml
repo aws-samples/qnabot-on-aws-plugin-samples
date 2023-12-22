@@ -56,6 +56,14 @@ Resources:
                   - "qbusiness:ChatSync"
                 Resource: !Sub "arn:aws:qbusiness:${AWS::Region}:${AWS::AccountId}:application/${AmazonQAppId}"
           PolicyName: QBusinessPolicy
+        - PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "s3:GetObject"
+                Resource: "arn:aws:s3:::*-importbucket-*/*"
+          PolicyName: S3ImportBucketPolicy
 
   QnaItemLambdaHookFunction:
     Type: AWS::Lambda::Function
