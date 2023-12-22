@@ -4,6 +4,8 @@ Amazon Q is a new generative AI-powered application that helps users get work do
 
 In this repo we share a project which lets you use Amazon Q's generative AI to enable QnABot users to access your organization's data and knowledge sources via conversational question-answering. You can connect to your organization data via data source connectors and integrate it with the QnABot LambdaHook plugin for Amazon Q to enable access to your QnABot users. It allows your users to converse with Amazon Q using QnABot to ask questions and get answers based on company data, get help creating new content such as emails, and performing tasks. 
 
+NEW! This plugin now supports attachments! Use the newest version of the [Lex Web UI](http://amazon.com/chatbotui) - version 0.20.4 or later - to add local file attachments to your conversation. There's more information on this feature in the Lex Web UI [File Upload README](https://github.com/aws-samples/aws-lex-web-ui/blob/master/README-file-upload.md). 
+
 It's pretty cool. It's easy to deploy in your own AWS Account, and add to your own QnABot. We show you how below.
 
 ![Amazon Q Demo](../../images/AmazonQLambdaHook.png)
@@ -58,4 +60,13 @@ Alternatively, you can supply an explicit `"Prompt"` key in the `QnAItemLambdaHo
 2. Launch the Web client
 4. Say *Hello*. And start asking questions!
 5. Enjoy.
+
+### Using file attachments
+
+This plugin now supports attachments! Use the newest version of the [Lex Web UI](http://amazon.com/chatbotui) - version 0.20.4 or later - to add local file attachments to your conversation. There's more information on this feature in the Lex Web UI [File Upload README](https://github.com/aws-samples/aws-lex-web-ui/blob/master/README-file-upload.md). 
+When deploying or updating your Lex Web UI, you can reuse QnABot's existing **ImportBucket** name as the **UploadBucket** parameter - it already has a CORS policy that will work, and the Q Business plugin lambda role already grants read access to uploads in this bucket. To find your QnaBot's ImportBucket, use the `Resources` tab in the QnABot stack to search for the bucket reasorce with the logical name **ImportBucket**.
+
+Here's an example of what you can do with attachments - it is a beautiful thing!
+
+![Amazon Q Demo](../../images/FileAttach.png)
 
