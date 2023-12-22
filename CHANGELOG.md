@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.14] - 2023-12-22
+### Added
+- Amazon Q Business Expert plugin now suports optional file attachments via Lex Web UI (v0.20.4) attach option and the new userFileUpload session attribute - PR #23.
+
+
 ## [0.1.13] - 2023-12-06
 ### Added
 - Bedrock plugin updates to support new text models - #22
@@ -75,7 +80,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial release
 
-[Unreleased]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/compare/v0.1.13...develop
+[Unreleased]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/compare/v0.1.14...develop
+[0.1.14]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.13
 [0.1.13]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.13
 [0.1.12]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.12
 [0.1.11]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.11

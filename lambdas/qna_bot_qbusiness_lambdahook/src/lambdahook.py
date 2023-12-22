@@ -17,7 +17,7 @@ qbusiness_client = boto3.client(
     endpoint_url=AMAZONQ_ENDPOINT_URL
 )
 
-def get_amazonq_response(prompt, context, amazonq_userid):
+def get_amazonq_response(prompt, context, amazonq_userid, attachments):
     print(f"get_amazonq_response: prompt={prompt}, app_id={AMAZONQ_APP_ID}, context={context}")
     input = {
         "applicationId": AMAZONQ_APP_ID,
@@ -31,8 +31,11 @@ def get_amazonq_response(prompt, context, amazonq_userid):
             input["parentMessageId"] = context["parentMessageId"]
     else:
         input["clientToken"] = str(uuid.uuid4())
+    
+    if attachments:
+        input["attachments"] = attachments
 
-    print("Amazon Q Input: ", json.dumps(input))
+    print("Amazon Q Input: ", input)
     try:
         resp = qbusiness_client.chat_sync(**input)
     except Exception as e:
@@ -75,6 +78,27 @@ def get_args_from_lambdahook_args(event):
             print(f"Failed to parse JSON:", lambdahook_args_list[0], e)
             print("..continuing")
     return parameters
+
+def getS3File(s3Path):
+    if s3Path.startswith("s3://"):
+        s3Path = s3Path[5:]
+    s3 = boto3.resource('s3')
+    bucket, key = s3Path.split("/", 1)
+    obj = s3.Object(bucket, key)
+    return obj.get()['Body'].read()
+
+def getAttachments(event):
+    userFilesUploaded = event["req"]["session"].get("userFilesUploaded",[])
+    attachments = []
+    for userFile in userFilesUploaded:
+        print(f"getAttachments: userFile={userFile}")
+        attachments.append({
+            "data": getS3File(userFile["s3Path"]),
+            "name": userFile["fileName"]
+        })
+    # delete userFilesUploaded from session
+    event["res"]["session"].pop("userFilesUploaded",None)
+    return attachments
 
 def format_response(event, amazonq_response):
     # get settings, if any, from lambda hook args
@@ -142,12 +166,13 @@ def lambda_handler(event, context):
     userInput = args.get("Prompt", event["req"]["question"])
     qnabotcontext = event["req"]["session"].get("qnabotcontext",{})
     amazonq_context = qnabotcontext.get("amazonq_context",{})
+    attachments = getAttachments(event)
     amazonq_userid = os.environ.get("AMAZONQ_USER_ID")
     if not amazonq_userid:
         amazonq_userid = get_user_email(event)
     else:
         print(f"using configured default user id: {amazonq_userid}")
-    amazonq_response = get_amazonq_response(userInput, amazonq_context, amazonq_userid)
+    amazonq_response = get_amazonq_response(userInput, amazonq_context, amazonq_userid, attachments)
     event = format_response(event, amazonq_response)
     print("Returning response: %s" % json.dumps(event))
     return event

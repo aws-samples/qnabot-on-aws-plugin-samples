@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: >
   Amazon Q (Business) Lambda Hook function for using with 'QnABot on AWS'. 
-  Use with the 'no_hits' (CustomNoMatches) item to use Amazon Q when no good answers are found by other methods - v0.1.12
+  Use with the 'no_hits' (CustomNoMatches) item to use Amazon Q when no good answers are found by other methods - v0.1.14
 
 Parameters:
 
@@ -56,6 +56,14 @@ Resources:
                   - "qbusiness:ChatSync"
                 Resource: !Sub "arn:aws:qbusiness:${AWS::Region}:${AWS::AccountId}:application/${AmazonQAppId}"
           PolicyName: QBusinessPolicy
+        - PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "s3:GetObject"
+                Resource: "arn:aws:s3:::*-importbucket-*/*"
+          PolicyName: S3ImportBucketPolicy
 
   QnaItemLambdaHookFunction:
     Type: AWS::Lambda::Function
