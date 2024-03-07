@@ -22,6 +22,7 @@ Parameters:
       - anthropic.claude-instant-v1
       - anthropic.claude-v2
       - anthropic.claude-v2:1
+      - anthropic.claude-3-sonnet-20240229-v1:0
       - cohere.command-text-v14
       - cohere.command-light-text-v14
       - meta.llama2-13b-chat-v1
