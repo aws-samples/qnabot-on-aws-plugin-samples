@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: QnABot on AWS LLM Plugin for Bedrock - v0.1.13
+Description: QnABot on AWS LLM Plugin for Bedrock - v0.1.14
 
 Parameters:
 
@@ -18,7 +18,6 @@ Parameters:
       - amazon.titan-text-lite-v1
       - ai21.j2-ultra-v1
       - ai21.j2-mid-v1
-      - anthropic.claude-v1
       - anthropic.claude-instant-v1
       - anthropic.claude-v2
       - anthropic.claude-v2:1
@@ -304,7 +303,7 @@ Resources:
       ServiceToken: !GetAtt OutputSettingsFunction.Arn
       EmbeddingsModelId: !Ref EmbeddingsModelId
       LLMModelId: !Ref LLMModelId
-      LastUpdate: '11/07/2023' 
+      LastUpdate: '03/07/2024' 
   
   TestBedrockModelFunction:
     Type: AWS::Lambda::Function
