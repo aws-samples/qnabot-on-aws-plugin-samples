@@ -75,7 +75,6 @@ def get_generate_text(modelId, response):
         if modelId.startswith("anthropic.claude-3"):
             generated_text = response_body.get("content")[0].get("text")
         else:
-            response_body = json.loads(response.get("body").read().decode())
             generated_text = response_body.get("completion")
     elif provider == "ai21":
         generated_text = response_body.get("completions")[0].get("data").get("text")
@@ -106,8 +105,9 @@ Example Test Event:
 {
   "prompt": "\n\nHuman:Why is the sky blue?\n\nAssistant:",
   "parameters": {
-    "modelId": "anthropic.claude-v2",
-    "temperature": 0
+    "modelId": "anthropic.claude-3-sonnet-20240229-v1:0",
+    "temperature": 0,
+    "system": "You are an AI assistant that always answers in ryhming couplets"
   }
 }
 For supported parameters for each provider model, see Bedrock docs: https://us-east-1.console.aws.amazon.com/bedrock/home?region=us-east-1#/providers
