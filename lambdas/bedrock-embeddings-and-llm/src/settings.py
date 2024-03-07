@@ -39,14 +39,14 @@ def getModelSettings(modelId):
     if provider == "anthropic":
         if modelId.startswith("anthropic.claude-3"):
             params = {
-                "model": modelId,
+                "modelId": modelId,
                 "temperature": 0,
                 "max_tokens": 256,
                 "top_p": 1
             }
             # add optional system prompt to qa params
             params_qa = {
-                "model": modelId,
+                "modelId": modelId,
                 "temperature": 0,
                 "max_tokens": 256,
                 "top_p": 1,
