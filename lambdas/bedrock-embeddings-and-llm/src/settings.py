@@ -52,6 +52,8 @@ def getModelSettings(modelId):
                 "top_p": 1,
                 "system": "You are a helpful AI assistant."
             }
+        else:
+            params.update({"max_tokens_to_sample": 256})
     lambdahook_args = {"Prefix":"LLM Answer:", "Model_params": params}
     settings = {
         'LLM_GENERATE_QUERY_MODEL_PARAMS': json.dumps(params),

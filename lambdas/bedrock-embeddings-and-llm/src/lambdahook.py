@@ -20,11 +20,20 @@ def get_request_body(modelId, parameters, prompt):
     provider = modelId.split(".")[0]
     request_body = None
     if provider == "anthropic":
-        request_body = {
-            "prompt": prompt,
-            "max_tokens_to_sample": DEFAULT_MAX_TOKENS
-        } 
-        request_body.update(parameters)
+        # claude-3 models use new messages format
+        if modelId.startswith("anthropic.claude-3"):
+            request_body = {
+                "anthropic_version": "bedrock-2023-05-31",
+                "messages": [{"role": "user", "content": [{'type':'text','text': prompt}]}],
+                "max_tokens": DEFAULT_MAX_TOKENS
+            }
+            request_body.update(parameters)
+        else:
+            request_body = {
+                "prompt": prompt,
+                "max_tokens_to_sample": DEFAULT_MAX_TOKENS
+            } 
+            request_body.update(parameters)
     elif provider == "ai21":
         request_body = {
             "prompt": prompt,
@@ -59,20 +68,21 @@ def get_request_body(modelId, parameters, prompt):
 def get_generate_text(modelId, response):
     provider = modelId.split(".")[0]
     generated_text = None
+    response_body = json.loads(response.get("body").read())
+    print("Response body: ", json.dumps(response_body))
     if provider == "anthropic":
-        response_body = json.loads(response.get("body").read().decode())
-        generated_text = response_body.get("completion")
+        # claude-3 models use new messages format
+        if modelId.startswith("anthropic.claude-3"):
+            generated_text = response_body.get("content")[0].get("text")
+        else:
+            generated_text = response_body.get("completion")
     elif provider == "ai21":
-        response_body = json.loads(response.get("body").read())
         generated_text = response_body.get("completions")[0].get("data").get("text")
     elif provider == "amazon":
-        response_body = json.loads(response.get("body").read())
         generated_text = response_body.get("results")[0].get("outputText")
     elif provider == "cohere":
-        response_body = json.loads(response.get('body').read())
         generated_text = response_body.get("generations")[0].get("text")
     elif provider == "meta":
-        response_body = json.loads(response.get('body').read())
         generated_text = response_body.get("generation")
     else:
         raise Exception("Unsupported provider: ", provider)
@@ -89,13 +99,15 @@ def replace_template_placeholders(prompt, event):
 def format_prompt(modelId, prompt):  
     provider = modelId.split(".")[0]
     if provider == "anthropic":
-        print("Model provider is Anthropic. Checking prompt format.")
-        if not prompt.startswith("\n\nHuman:") or not prompt.startswith("\n\nSystem:"):
-            prompt = "\n\nHuman: " + prompt
-            print("Prepended '\\n\\nHuman:'")
-        if not prompt.endswith("\n\nAssistant:"):
-            prompt = prompt + "\n\nAssistant:"
-            print("Appended '\\n\\nHuman:'")
+        # Claude models prior to v3 required 'Human/Assistant' formatting
+        if not modelId.startswith("anthropic.claude-3"):
+            print("Model provider is Anthropic v2. Checking prompt format.")
+            if not prompt.startswith("\n\nHuman:") or not prompt.startswith("\n\nSystem:"):
+                prompt = "\n\nHuman: " + prompt
+                print("Prepended '\\n\\nHuman:'")
+            if not prompt.endswith("\n\nAssistant:"):
+                prompt = prompt + "\n\nAssistant:"
+                print("Appended '\\n\\nHuman:'")
     print(f"Prompt: {json.dumps(prompt)}")
     return prompt
 
