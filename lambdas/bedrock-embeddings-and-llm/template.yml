@@ -303,7 +303,7 @@ Resources:
       ServiceToken: !GetAtt OutputSettingsFunction.Arn
       EmbeddingsModelId: !Ref EmbeddingsModelId
       LLMModelId: !Ref LLMModelId
-      LastUpdate: '03/07/2024 11:45' 
+      LastUpdate: '03/07/2024 12:20' 
   
   TestBedrockModelFunction:
     Type: AWS::Lambda::Function
