@@ -20,11 +20,20 @@ def get_request_body(modelId, parameters, prompt):
     provider = modelId.split(".")[0]
     request_body = None
     if provider == "anthropic":
-        request_body = {
-            "prompt": prompt,
-            "max_tokens_to_sample": DEFAULT_MAX_TOKENS
-        } 
-        request_body.update(parameters)
+        # claude-3 models use new messages format
+        if modelId.startswith("anthropic.claude-3"):
+            request_body = {
+                "anthropic_version": "bedrock-2023-05-31",
+                "messages": [{"role": "user", "content": [{'type':'text','text': prompt}]}],
+                "max_tokens": DEFAULT_MAX_TOKENS
+            }
+            request_body.update(parameters)
+        else:
+            request_body = {
+                "prompt": prompt,
+                "max_tokens_to_sample": DEFAULT_MAX_TOKENS
+            } 
+            request_body.update(parameters)
     elif provider == "ai21":
         request_body = {
             "prompt": prompt,
@@ -59,20 +68,21 @@ def get_request_body(modelId, parameters, prompt):
 def get_generate_text(modelId, response):
     provider = modelId.split(".")[0]
     generated_text = None
+    response_body = json.loads(response.get("body").read())
+    print("Response body: ", json.dumps(response_body))
     if provider == "anthropic":
-        response_body = json.loads(response.get("body").read().decode())
-        generated_text = response_body.get("completion")
+        # claude-3 models use new messages format
+        if modelId.startswith("anthropic.claude-3"):
+            generated_text = response_body.get("content")[0].get("text")
+        else:
+            generated_text = response_body.get("completion")
     elif provider == "ai21":
-        response_body = json.loads(response.get("body").read())
         generated_text = response_body.get("completions")[0].get("data").get("text")
     elif provider == "amazon":
-        response_body = json.loads(response.get("body").read())
         generated_text = response_body.get("results")[0].get("outputText")
     elif provider == "cohere":
-        response_body = json.loads(response.get('body').read())
         generated_text = response_body.get("generations")[0].get("text")
     elif provider == "meta":
-        response_body = json.loads(response.get('body').read())
         generated_text = response_body.get("generation")
     else:
         raise Exception("Unsupported provider: ", provider)
@@ -95,8 +105,9 @@ Example Test Event:
 {
   "prompt": "\n\nHuman:Why is the sky blue?\n\nAssistant:",
   "parameters": {
-    "modelId": "anthropic.claude-v1",
-    "temperature": 0
+    "modelId": "anthropic.claude-3-sonnet-20240229-v1:0",
+    "temperature": 0,
+    "system": "You are an AI assistant that always answers in ryhming couplets"
   }
 }
 For supported parameters for each provider model, see Bedrock docs: https://us-east-1.console.aws.amazon.com/bedrock/home?region=us-east-1#/providers
