@@ -33,10 +33,29 @@ def getModelSettings(modelId):
         "modelId": modelId,
         "temperature": 0
     }
+    params_qa = params.copy()
+    # claude-3 message API params are slightly different
+    provider = modelId.split(".")[0]
+    if provider == "anthropic":
+        if modelId.startswith("anthropic.claude-3"):
+            params = {
+                "modelId": modelId,
+                "temperature": 0,
+                "max_tokens": 256,
+                "top_p": 1
+            }
+            # add optional system prompt to qa params
+            params_qa = {
+                "modelId": modelId,
+                "temperature": 0,
+                "max_tokens": 256,
+                "top_p": 1,
+                "system": "You are a helpful AI assistant."
+            }
     lambdahook_args = {"Prefix":"LLM Answer:", "Model_params": params}
     settings = {
         'LLM_GENERATE_QUERY_MODEL_PARAMS': json.dumps(params),
-        'LLM_QA_MODEL_PARAMS': json.dumps(params),
+        'LLM_QA_MODEL_PARAMS': json.dumps(params_qa),
         'QNAITEM_LAMBDAHOOK_ARGS': json.dumps(lambdahook_args)
     }
     provider = modelId.split(".")[0]

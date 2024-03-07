@@ -90,7 +90,7 @@ def format_prompt(modelId, prompt):
     provider = modelId.split(".")[0]
     if provider == "anthropic":
         print("Model provider is Anthropic. Checking prompt format.")
-        if not prompt.startswith("\n\nHuman:"):
+        if not prompt.startswith("\n\nHuman:") or not prompt.startswith("\n\nSystem:"):
             prompt = "\n\nHuman: " + prompt
             print("Prepended '\\n\\nHuman:'")
         if not prompt.endswith("\n\nAssistant:"):
