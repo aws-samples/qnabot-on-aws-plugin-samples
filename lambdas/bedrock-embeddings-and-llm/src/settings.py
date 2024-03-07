@@ -54,6 +54,7 @@ def getModelSettings(modelId):
             }
         else:
             params.update({"max_tokens_to_sample": 256})
+            params_qa.update({"max_tokens_to_sample": 256})
     lambdahook_args = {"Prefix":"LLM Answer:", "Model_params": params}
     settings = {
         'LLM_GENERATE_QUERY_MODEL_PARAMS': json.dumps(params),
