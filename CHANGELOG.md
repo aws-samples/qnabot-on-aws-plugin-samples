@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.1.15] - 2024-03-07
 ### Added
-- Amazon Bedrock LLM plugin now suports anthropic.claude-3-sonnet model, and deprecates anthropic.claude-v1  - PR #26.
+- Amazon Bedrock LLM plugin now suports anthropic.claude-3-sonnet model, and deprecates anthropic.claude-v1  - PR #26 & PR #27.
 
 ## [0.1.14] - 2023-12-22
 ### Added
