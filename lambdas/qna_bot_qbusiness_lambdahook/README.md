@@ -1,4 +1,7 @@
-# QnABot LambdaHook for Amazon Q, your business expert (preview)
+# QnABot LambdaHook for Amazon Q Business (preview)
+
+| :zap:        If you have created a new Amazon Q Business application on or after April 30th, 2024, you will not be able to set up a QnAbot LambdaHook for Amazon Q Business using the instructions provided below. This is because new Amazon Q Business applications require integration with IAM Identity Center. We don't currently have a plan to update the plugin to accommodate the setup for new applications created since April 30th, 2024. We'd be delighted to accept a Pull Request from community members if you make it work in the meantime.  |
+|-----------------------------------------|
 
 Amazon Q is a new generative AI-powered application that helps users get work done. Amazon Q can become your tailored business expert and let you discover content, brainstorm ideas, or create summaries using your company’s data safely and securely. For more information see: [Introducing Amazon Q, a new generative AI-powered assistant (preview)](https://aws.amazon.com/blogs/aws/introducing-amazon-q-a-new-generative-ai-powered-assistant-preview)
 
