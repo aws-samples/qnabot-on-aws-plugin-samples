@@ -12,7 +12,7 @@ Parameters:
 
   LLMModelId:
     Type: String
-    Default: anthropic.claude-instant-v1
+    Default: anthropic.claude-3-haiku-20240307-v1:0
     AllowedValues:
       - amazon.titan-text-express-v1
       - amazon.titan-text-lite-v1
@@ -21,7 +21,9 @@ Parameters:
       - anthropic.claude-instant-v1
       - anthropic.claude-v2
       - anthropic.claude-v2:1
+      - anthropic.claude-3-haiku-20240307-v1:0
       - anthropic.claude-3-sonnet-20240229-v1:0
+      - anthropic.claude-3-opus-20240229-v1:0
       - cohere.command-text-v14
       - cohere.command-light-text-v14
       - meta.llama2-13b-chat-v1
