@@ -10,6 +10,22 @@ Parameters:
     AllowedPattern: '^[a-zA-Z0-9][a-zA-Z0-9-]{35}$'
     Description: Amazon Q Application ID (copy from AWS console)
 
+  AmazonQRoleARN:
+    Type: String
+    Description: Amazon Q Business Role ARN to Assume (copy from AWS console)
+
+  IDCClientId:
+    Type: String
+    Description: Amazon Q Business IDC Client ID (copy from AWS console)
+
+  DynamoDBTableName:
+    Type: String
+    Description: DynamoDB Table Name used for caching QBusiness credentials (copy from AWS console)
+
+  KMSKeyId:
+    Type: String
+    Description: KMS Key ID used for encrypting and decrypting QBusiness credentials (copy from AWS console)
+
   AmazonQUserId:
     Type: String
     Default: ""
@@ -81,6 +97,10 @@ Resources:
         Variables:
           AWS_DATA_PATH: /opt/model
           AMAZONQ_APP_ID: !Ref AmazonQAppId
+          AMAZONQ_ROLE_ARN: !Ref AmazonQRoleARN
+          DYNAMODB_CACHE_TABLE_NAME: !Ref DynamoDBTableName
+          KMS_KEY_ID: !Ref KMSKeyId
+          IDC_CLIENT_ID: !Ref IDCClientId
           AMAZONQ_USER_ID: !Ref AmazonQUserId
           AMAZONQ_REGION: !Ref AmazonQRegion
           AMAZONQ_ENDPOINT_URL: !Ref AmazonQEndpointUrl
