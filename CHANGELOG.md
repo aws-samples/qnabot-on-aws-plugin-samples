@@ -5,10 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [0.1.17] - 2024-07-08
+- Amazon Q Business Expert plugin now supports Identity Center authentication - PR #30
 
-## [0.1.16] - 2024-03-07
+## [0.1.16] - 2024-07-02
 ### Added
-- Amazon Q Business Expert plugin now supports Identity Center authentication
+- Amazon Bedrock LLM plugin now suports anthropic.claude-3-haiku model - PR #28.
 
 ## [0.1.15] - 2024-03-07
 ### Added
@@ -88,7 +90,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial release
 
-[Unreleased]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/compare/v0.1.14...develop
+[Unreleased]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/compare/main...develop
+[0.1.17]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.17
 [0.1.16]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.16
 [0.1.15]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.15
 [0.1.14]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.14
