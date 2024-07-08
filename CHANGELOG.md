@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.16] - 2024-03-07
+### Added
+- Amazon Q Business Expert plugin now supports Identity Center authentication
+
 ## [0.1.15] - 2024-03-07
 ### Added
 - Amazon Bedrock LLM plugin now suports anthropic.claude-3-sonnet model, and deprecates anthropic.claude-v1  - PR #26 & PR #27.
@@ -85,6 +89,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial release
 
 [Unreleased]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/compare/v0.1.14...develop
+[0.1.16]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.16
 [0.1.15]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.15
 [0.1.14]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.14
 [0.1.13]: https://github.com/aws-samples/qnabot-on-aws-plugin-samples/releases/tag/v0.1.13

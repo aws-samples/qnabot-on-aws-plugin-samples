@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: >
   Amazon Q (Business) Lambda Hook function for using with 'QnABot on AWS'. 
-  Use with the 'no_hits' (CustomNoMatches) item to use Amazon Q when no good answers are found by other methods - v0.1.14
+  Use with the 'no_hits' (CustomNoMatches) item to use Amazon Q when no good answers are found by other methods - v0.1.16
 
 Parameters:
 
