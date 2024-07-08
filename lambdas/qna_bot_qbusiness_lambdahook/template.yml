@@ -8,28 +8,15 @@ Parameters:
   AmazonQAppId:
     Type: String
     AllowedPattern: '^[a-zA-Z0-9][a-zA-Z0-9-]{35}$'
-    Description: Amazon Q Application ID (copy from AWS console)
+    Description: Amazon Q Application ID
 
-  AmazonQRoleARN:
+  IDCApplicationARN:
     Type: String
-    Description: Amazon Q Business Role ARN to Assume (copy from AWS console)
-
-  IDCClientId:
-    Type: String
-    Description: Amazon Q Business IDC Client ID (copy from AWS console)
+    Description: ARN of the Identity Center customer managed application created for QBusiness
 
   DynamoDBTableName:
     Type: String
-    Description: DynamoDB Table Name used for caching QBusiness credentials (copy from AWS console)
-
-  KMSKeyId:
-    Type: String
-    Description: KMS Key ID used for encrypting and decrypting QBusiness credentials (copy from AWS console)
-
-  AmazonQUserId:
-    Type: String
-    Default: ""
-    Description: Amazon Q User ID (leave empty to use authenticated bot users' email as user Id)
+    Description: DynamoDB Table Name used for caching QBusiness credentials
 
   AmazonQRegion:
     Type: String
@@ -44,12 +31,72 @@ Parameters:
 
 Resources:
 
+  QManagedPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Sid: AllowQChat
+          Effect: Allow
+          Action:
+          - "qbusiness:ChatSync"
+          Resource: !Sub "arn:${AWS::Partition}:qbusiness:${AWS::Region}:${AWS::AccountId}:application/${AmazonQAppId}"
+        
+  QServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Effect: Allow
+          Principal:
+            AWS:
+            - !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:root
+          Action:
+          - sts:AssumeRole
+          - sts:SetContext
+      Path: /
+      ManagedPolicyArns:
+      - !Ref QManagedPolicy
+
   QBusinessModelLayer:
     Type: "AWS::Lambda::LayerVersion"
     Properties:
       Content: ../../layers/qbusiness_boto3_model
       CompatibleRuntimes:
-        - python3.11
+        - python3.12
+
+  KMSKey:
+    Type: 'AWS::KMS::Key'
+    Properties:
+      KeySpec: 'SYMMETRIC_DEFAULT'
+      KeyUsage: 'ENCRYPT_DECRYPT'
+      KeyPolicy:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            AWS: !Sub 'arn:aws:iam::${AWS::AccountId}:root'
+          Action: 'kms:*'
+          Resource: '*'
+
+  CredentialsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+      - AttributeName: "jti"
+        AttributeType: "S"
+      KeySchema:
+      - AttributeName: "jti"
+        KeyType: "HASH"
+      BillingMode: PAY_PER_REQUEST
+      SSESpecification:
+        SSEEnabled: True
+      TableName: !Ref DynamoDBTableName
+      TimeToLiveSpecification:
+        AttributeName: ExpiresAt
+        Enabled: true
 
   LambdaFunctionRole:
     Type: AWS::IAM::Role
@@ -78,8 +125,46 @@ Resources:
               - Effect: Allow
                 Action:
                   - "s3:GetObject"
-                Resource: "arn:aws:s3:::*-importbucket-*/*"
+                Resource: "arn:aws:s3:::*/*"
           PolicyName: S3ImportBucketPolicy
+        - PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                   - "dynamodb:PutItem"
+                   - "dynamodb:GetItem"
+                Resource:
+                   - !Sub "arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDBTableName}"
+          PolicyName: DynamoDbPolicy
+        - PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                   - "kms:Decrypt"
+                   - "kms:Encrypt"
+                Resource:
+                   - !Sub "arn:${AWS::Partition}:kms:${AWS::Region}:${AWS::AccountId}:key/${KMSKey}"
+          PolicyName: KmsPolicy
+        - PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                   - "sso-oauth:CreateTokenWithIAM"
+                Resource: "*"
+          PolicyName: OICDPolicy
+        - PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                   - "sts:AssumeRole"
+                   - "sts:SetContext"
+                Resource:
+                   - !GetAtt QServiceRole.Arn
+          PolicyName: AllowAssumeQRole
 
   QnaItemLambdaHookFunction:
     Type: AWS::Lambda::Function
@@ -88,7 +173,7 @@ Resources:
       FunctionName: !Sub "QNA-LAMBDAHOOK-${AWS::StackName}"
       Handler: lambdahook.lambda_handler
       Role: !GetAtt 'LambdaFunctionRole.Arn'
-      Runtime: python3.11
+      Runtime: python3.12
       Layers: 
         - !Ref QBusinessModelLayer
       Timeout: 60
@@ -97,11 +182,10 @@ Resources:
         Variables:
           AWS_DATA_PATH: /opt/model
           AMAZONQ_APP_ID: !Ref AmazonQAppId
-          AMAZONQ_ROLE_ARN: !Ref AmazonQRoleARN
-          DYNAMODB_CACHE_TABLE_NAME: !Ref DynamoDBTableName
-          KMS_KEY_ID: !Ref KMSKeyId
-          IDC_CLIENT_ID: !Ref IDCClientId
-          AMAZONQ_USER_ID: !Ref AmazonQUserId
+          AMAZONQ_ROLE_ARN: !GetAtt QServiceRole.Arn
+          DYNAMODB_CACHE_TABLE_NAME: !Ref CredentialsTable
+          KMS_KEY_ID: !Ref KMSKey
+          IDC_CLIENT_ID: !Ref IDCApplicationARN
           AMAZONQ_REGION: !Ref AmazonQRegion
           AMAZONQ_ENDPOINT_URL: !Ref AmazonQEndpointUrl
       Code: ./src
@@ -123,4 +207,8 @@ Outputs:
   QnAItemLambdaHookArgs:
     Description: QnA Item Lambda Hook Args (use with no_hits item for optional ask-the-LLM fallback)
     Value: '{"Prefix":"Amazon Q Answer:", "ShowContextText":true, "ShowSourceLinks":true}'
+
+  QnAItemLambdaFunctionRoleArn:
+    Description: ARN of the Role created for executing the Lambda function
+    Value: !GetAtt LambdaFunctionRole.Arn
     
